@@ -14,26 +14,81 @@
 #define CONFIG_FILE "config.txt"
 
 // Message types - Các loại thông điệp
-#define MSG_REGISTER 1      // Đăng ký tài khoản
-#define MSG_LOGIN 2         // Đăng nhập
-#define MSG_LOGOUT 3        // Đăng xuất
-#define MSG_SUCCESS 100     // Thành công
-#define MSG_ERROR 101       // Lỗi
+#define MSG_REGISTER_REQ 1   // Yêu cầu đăng ký tài khoản
+#define MSG_REGISTER_RES 2   // Phản hồi đăng ký
+#define MSG_LOGIN_REQ 3      // Yêu cầu đăng nhập
+#define MSG_LOGIN_RES 4      // Phản hồi đăng nhập
+#define MSG_LOGOUT_REQ 5     // Yêu cầu đăng xuất
+#define MSG_LOGOUT_RES 6     // Phản hồi đăng xuất
+
+// Status codes - Mã trạng thái
+#define STATUS_OK 1          // Thành công
+#define STATUS_FAIL 0        // Thất bại
+
+// Default listen port for P2P
+#define DEFAULT_LISTEN_PORT 9090
 
 /**
- * Cấu trúc Message - Thông điệp giữa client và server
- * type: Loại thông điệp (MSG_REGISTER, MSG_LOGIN, MSG_LOGOUT)
- * client_id: ID duy nhất của client
- * username: Tên đăng nhập
- * password: Mật khẩu
- * data: Dữ liệu phản hồi từ server
+ * Cấu trúc Register Request - Yêu cầu đăng ký
  */
 typedef struct {
-    int type;
-    uint32_t client_id;
     char username[MAX_USERNAME];
     char password[MAX_PASSWORD];
-    char data[BUFFER_SIZE];
+} register_req_t;
+
+/**
+ * Cấu trúc Register Response - Phản hồi đăng ký
+ */
+typedef struct {
+    int status;  // STATUS_OK hoặc STATUS_FAIL
+} register_res_t;
+
+/**
+ * Cấu trúc Login Request - Yêu cầu đăng nhập
+ */
+typedef struct {
+    uint32_t client_id;     // ID định danh từ config.txt
+    int listen_port;        // Cổng để kết nối P2P
+    char username[MAX_USERNAME];
+    char password[MAX_PASSWORD];
+} login_req_t;
+
+/**
+ * Cấu trúc Login Response - Phản hồi đăng nhập
+ */
+typedef struct {
+    int status;  // STATUS_OK hoặc STATUS_FAIL
+} login_res_t;
+
+/**
+ * Cấu trúc Logout Request - Yêu cầu đăng xuất
+ */
+typedef struct {
+    uint32_t client_id;
+} logout_req_t;
+
+/**
+ * Cấu trúc Logout Response - Phản hồi đăng xuất
+ */
+typedef struct {
+    int status;  // STATUS_OK hoặc STATUS_FAIL
+} logout_res_t;
+
+/**
+ * Cấu trúc Message - Header + Payload
+ * header: Loại thông điệp (MSG_*_REQ hoặc MSG_*_RES)
+ * payload: Dữ liệu tương ứng với từng loại thông điệp
+ */
+typedef struct {
+    int header;
+    union {
+        register_req_t register_req;
+        register_res_t register_res;
+        login_req_t login_req;
+        login_res_t login_res;
+        logout_req_t logout_req;
+        logout_res_t logout_res;
+    } payload;
 } Message;
 
 // Global variables - Biến toàn cục
@@ -85,7 +140,69 @@ int main() {
     }
     
     if (connect_to_server(server_ip, server_port) < 0) {
-        printf("Failed to connect to server\\n");\n        printf("Không thể kết nối đến server\\n");\n        return 1;\n    }\n    \n    printf(\"Connected to server at %s:%d\\n\", server_ip, server_port);\n    printf(\"Đã kết nối đến server tại %s:%d\\n\", server_ip, server_port);\n    \n    int choice;\n    \n    while (1) {\n        display_menu();\n        printf(\"\\nEnter your choice (Nhập lựa chọn): \");\n        scanf(\"%d\", &choice);\n        getchar(); // consume newline\n        \n        switch (choice) {\n            case 1:\n                if (register_user() == 0) {\n                    printf(\"Registration successful! - Đăng ký thành công!\\n\");\n                } else {\n                    printf(\"Registration failed! - Đăng ký thất bại!\\n\");\n                }\n                break;\n                \n            case 2:\n                if (login_user() == 0) {\n                    printf(\"Login successful! - Đăng nhập thành công!\\n\");\n                    g_logged_in = 1;\n                } else {\n                    printf(\"Login failed! - Đăng nhập thất bại!\\n\");\n                }\n                break;\n                \n            case 3:\n                if (g_logged_in) {\n                    logout_user();\n                    g_logged_in = 0;\n                    printf(\"Logged out successfully! - Đăng xuất thành công!\\n\");\n                } else {\n                    printf(\"You are not logged in! - Bạn chưa đăng nhập!\\n\");\n                }\n                break;\n                \n            case 4:\n                show_user_status();\n                break;\n                \n            case 0:\n                if (g_logged_in) {\n                    logout_user();\n                }\n                close(g_server_sock);\n                printf(\"Goodbye! - Tạm biệt!\\n\");\n                return 0;\n                \n            default:\n                printf(\"Invalid choice! - Lựa chọn không hợp lệ!\\n\");\n        }\n    }\n    \n    return 0;\n}"}
+        printf("Failed to connect to server\n");
+        printf("Không thể kết nối đến server\n");
+        return 1;
+    }
+    
+    printf("Connected to server at %s:%d\n", server_ip, server_port);
+    printf("Đã kết nối đến server tại %s:%d\n", server_ip, server_port);
+    
+    int choice;
+    
+    while (1) {
+        display_menu();
+        printf("\nEnter your choice (Nhập lựa chọn): ");
+        scanf("%d", &choice);
+        getchar(); // consume newline
+        
+        switch (choice) {
+            case 1:
+                if (register_user() == 0) {
+                    printf("Registration successful! - Đăng ký thành công!\n");
+                } else {
+                    printf("Registration failed! - Đăng ký thất bại!\n");
+                }
+                break;
+                
+            case 2:
+                if (login_user() == 0) {
+                    printf("Login successful! - Đăng nhập thành công!\n");
+                    g_logged_in = 1;
+                } else {
+                    printf("Login failed! - Đăng nhập thất bại!\n");
+                }
+                break;
+                
+            case 3:
+                if (g_logged_in) {
+                    logout_user();
+                    g_logged_in = 0;
+                    printf("Logged out successfully! - Đăng xuất thành công!\n");
+                } else {
+                    printf("You are not logged in! - Bạn chưa đăng nhập!\n");
+                }
+                break;
+                
+            case 4:
+                show_user_status();
+                break;
+                
+            case 0:
+                if (g_logged_in) {
+                    logout_user();
+                }
+                close(g_server_sock);
+                printf("Goodbye! - Tạm biệt!\n");
+                return 0;
+                
+            default:
+                printf("Invalid choice! - Lựa chọn không hợp lệ!\n");
+        }
+    }
+    
+    return 0;
+}
 
 /**
  * Tạo ID ngẫu nhiên 32-bit cho client
@@ -172,17 +289,17 @@ int connect_to_server(const char *server_ip, int server_port) {
 int register_user() {
     Message msg;
     memset(&msg, 0, sizeof(Message));
-    msg.type = MSG_REGISTER;
+    msg.header = MSG_REGISTER_REQ;
     
     printf("\n=== User Registration - Đăng ký tài khoản ===\n");
     
     printf("Enter username (Nhập tên đăng nhập): ");
-    fgets(msg.username, sizeof(msg.username), stdin);
-    msg.username[strlen(msg.username) - 1] = '\0'; // Xóa ký tự xuống dòng
+    fgets(msg.payload.register_req.username, sizeof(msg.payload.register_req.username), stdin);
+    msg.payload.register_req.username[strlen(msg.payload.register_req.username) - 1] = '\0';
     
     printf("Enter password (Nhập mật khẩu): ");
-    fgets(msg.password, sizeof(msg.password), stdin);
-    msg.password[strlen(msg.password) - 1] = '\0'; // Xóa ký tự xuống dòng
+    fgets(msg.payload.register_req.password, sizeof(msg.payload.register_req.password), stdin);
+    msg.payload.register_req.password[strlen(msg.payload.register_req.password) - 1] = '\0';
     
     // Gửi yêu cầu đăng ký đến server
     if (send(g_server_sock, &msg, sizeof(Message), 0) < 0) {
@@ -197,11 +314,11 @@ int register_user() {
         return -1;
     }
     
-    if (response.type == MSG_SUCCESS) {
-        printf("✓ %s\n", response.data);
+    if (response.header == MSG_REGISTER_RES && response.payload.register_res.status == STATUS_OK) {
+        printf("✓ Registration successful - Đăng ký thành công\n");
         return 0;
     } else {
-        printf("✗ Error: %s\n", response.data);
+        printf("✗ Registration failed - Đăng ký thất bại\n");
         return -1;
     }
 }
@@ -213,18 +330,19 @@ int register_user() {
 int login_user() {
     Message msg;
     memset(&msg, 0, sizeof(Message));
-    msg.type = MSG_LOGIN;
-    msg.client_id = g_client_id;
+    msg.header = MSG_LOGIN_REQ;
+    msg.payload.login_req.client_id = g_client_id;
+    msg.payload.login_req.listen_port = DEFAULT_LISTEN_PORT;
     
     printf("\n=== User Login - Đăng nhập ===\n");
     
     printf("Enter username (Nhập tên đăng nhập): ");
-    fgets(msg.username, sizeof(msg.username), stdin);
-    msg.username[strlen(msg.username) - 1] = '\0'; // Xóa ký tự xuống dòng
+    fgets(msg.payload.login_req.username, sizeof(msg.payload.login_req.username), stdin);
+    msg.payload.login_req.username[strlen(msg.payload.login_req.username) - 1] = '\0';
     
     printf("Enter password (Nhập mật khẩu): ");
-    fgets(msg.password, sizeof(msg.password), stdin);
-    msg.password[strlen(msg.password) - 1] = '\0'; // Xóa ký tự xuống dòng
+    fgets(msg.payload.login_req.password, sizeof(msg.payload.login_req.password), stdin);
+    msg.payload.login_req.password[strlen(msg.payload.login_req.password) - 1] = '\0';
     
     // Gửi yêu cầu đăng nhập đến server
     if (send(g_server_sock, &msg, sizeof(Message), 0) < 0) {
@@ -239,14 +357,15 @@ int login_user() {
         return -1;
     }
     
-    if (response.type == MSG_SUCCESS) {
-        strcpy(g_username, msg.username);
-        printf("✓ %s\n", response.data);
-        printf("Welcome %s! Client ID: %u\n", g_username, g_client_id);
-        printf("Chào mừng %s! ID Client: %u\n", g_username, g_client_id);
+    if (response.header == MSG_LOGIN_RES && response.payload.login_res.status == STATUS_OK) {
+        strcpy(g_username, msg.payload.login_req.username);
+        printf("✓ Login successful - Đăng nhập thành công\n");
+        printf("Welcome %s! Client ID: %u | Listen Port: %d\n", g_username, g_client_id, DEFAULT_LISTEN_PORT);
+        printf("Chào mừng %s! ID Client: %u | Port lắng nghe: %d\n", g_username, g_client_id, DEFAULT_LISTEN_PORT);
         return 0;
     } else {
-        printf("✗ Error: %s\n", response.data);
+        printf("✗ Login failed - Invalid username or password\n");
+        printf("✗ Đăng nhập thất bại - Sai tên đăng nhập hoặc mật khẩu\n");
         return -1;
     }
 }
@@ -257,8 +376,8 @@ int login_user() {
 void logout_user() {
     Message msg;
     memset(&msg, 0, sizeof(Message));
-    msg.type = MSG_LOGOUT;
-    msg.client_id = g_client_id;
+    msg.header = MSG_LOGOUT_REQ;
+    msg.payload.logout_req.client_id = g_client_id;
     
     // Gửi yêu cầu đăng xuất đến server
     if (send(g_server_sock, &msg, sizeof(Message), 0) < 0) {
@@ -273,7 +392,12 @@ void logout_user() {
         return;
     }
     
-    printf("✓ %s\n", response.data);
+    if (response.header == MSG_LOGOUT_RES && response.payload.logout_res.status == STATUS_OK) {
+        printf("✓ Logout successful - Đăng xuất thành công\n");
+    } else {
+        printf("✗ Logout failed - Đăng xuất thất bại\n");
+    }
+    
     printf("Goodbye %s!\n", g_username);
     printf("Tạm biệt %s!\n", g_username);
     
@@ -287,10 +411,12 @@ void logout_user() {
 void show_user_status() {
     printf("\n=== User Status - Trạng thái người dùng ===\n");
     printf("Client ID: %u\n", g_client_id);
+    printf("P2P Listen Port: %d\n", DEFAULT_LISTEN_PORT);
     
     if (g_logged_in) {
-        printf("Status: Logged in as '%s' - Đã đăng nhập với tên '%s'\n", g_username);
+        printf("Status: Logged in as '%s' - Đã đăng nhập với tên '%s'\n", g_username, g_username);
         printf("✓ Connected to server - Đã kết nối đến server\n");
+        printf("✓ Ready for P2P connections - Sẵn sàng kết nối P2P\n");
     } else {
         printf("Status: Not logged in - Chưa đăng nhập\n");
         printf("✗ Please login to use the system - Vui lòng đăng nhập để sử dụng\n");
@@ -301,14 +427,9 @@ void show_user_status() {
  * Hiển thị menu lựa chọn chính
  */
 void display_menu() {
-    printf("\n" "================================\n");
-    printf("=== P2P File Sharing Menu ===\n");
-    printf("=== Menu Chia sẻ file P2P ===\n");
-    printf("================================\n");
     printf("1. Register (Đăng ký)\n");
     printf("2. Login (Đăng nhập)\n");
     printf("3. Logout (Đăng xuất)\n");
     printf("4. User Status (Trạng thái)\n");
     printf("0. Exit (Thoát)\n");
-    printf("================================\n");
 }
