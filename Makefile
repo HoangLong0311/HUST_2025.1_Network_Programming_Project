@@ -18,6 +18,9 @@ CLIENT_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(CLIENT_SRCS))
 SERVER_EXEC = $(BIN_DIR)/server_app
 CLIENT_EXEC = $(BIN_DIR)/client_app
 
+# All
+all: build
+
 # Build
 build: $(SERVER_EXEC) $(CLIENT_EXEC)
 ## Link server app 
