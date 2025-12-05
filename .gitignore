@@ -1,0 +1,15 @@
+
+# Output file
+build/
+bin/
+*.o
+*.exe
+*.out
+*.d
+
+# System file
+config.txt
+*.log
+
+# Vscode 
+.vscode/
