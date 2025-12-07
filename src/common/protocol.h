@@ -10,9 +10,13 @@
 #define MAX_PASSWORD_LEN 32
 #define MAX_IP_LEN INET_ADDRSTRLEN
 #define BUFFER_SIZE 1024
+
 #define CONFIG_FILE "config.txt"
 #define ACCOUNT_FILE "account.txt"
-#define DEFAULT_LISTEN_PORT 9090
+
+#define SERVER_PORT 5000
+#define BACKLOG 10
+
 
 // --- MESSAGE TYPES ---
 // Auth
