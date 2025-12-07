@@ -9,7 +9,8 @@
 #define ALREADY_LOGGED_IN 4
 
 #define USERNAME_ALREADY_TAKEN 5
-#define DATABASE_FULL 5
+#define DATABASE_FULL 6
+#define SYSTEM_ERROR -1
 
 typedef struct {
     char username[MAX_USERNAME_LEN];
