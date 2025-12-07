@@ -61,7 +61,7 @@
 typedef struct
 {
     uint8_t msg_type; // Message type
-    uint16_t len;     // Payload length in bytes
+    uint16_t payload_len;     // Payload length in bytes
 } header_t;
 
 // -- Payload struct --
