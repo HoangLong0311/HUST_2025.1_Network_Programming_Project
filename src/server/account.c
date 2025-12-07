@@ -91,8 +91,11 @@ int login_account(char *username, char *password) {
 }
 
 int logout_account(char* username){
+    pthread_mutex_lock(&accounts_mutex);
+
     Account *acc = find_account_by_username(username);
     if (acc == NULL) {
+        
         return USER_NOT_FOUND; 
     }
     

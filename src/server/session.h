@@ -4,15 +4,15 @@
 #include <pthread.h>
 #include "protocol.h"
 
-
 typedef struct {
     int conn_sock;                      // connect socket
     char username[MAX_USERNAME_LEN];    // username in session
 } Session;
 
-Session sessions[MAX_CLIENTS]; // Online sessions
-
-// create mutex for session
-pthread_mutex_t sessions_mutex = PTHREAD_MUTEX_INITIALIZER;
+void init_sessions();
+int add_session(int sock, char* username);
+void remove_session(int sock);
+int is_user_online(char* username);
+int check_session_owner(int sock, char* username);
 
 #endif

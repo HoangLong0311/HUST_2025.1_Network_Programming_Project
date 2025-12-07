@@ -54,3 +54,18 @@ int is_user_online(char* username) {
     pthread_mutex_unlock(&sessions_mutex);
     return found;
 }
+
+int check_session_owner(int sock, char* username){
+    pthread_mutex_lock(&sessions_mutex);
+    
+    int is_owner = 0;
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        if (sessions[i].conn_sock == sock && strcmp(sessions[i].username, username) == 0) {
+            is_owner = 1;
+            break;
+        }
+    }
+    
+    pthread_mutex_unlock(&sessions_mutex);
+    return is_owner;
+}
