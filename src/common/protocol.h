@@ -9,71 +9,94 @@
 #define MAX_PASSWORD_LEN 32
 #define MAX_IP_LEN INET_ADDRSTRLEN
 #define BUFFER_SIZE 1024
-#define CONFIG_FILE "config.txt"    
+#define CONFIG_FILE "config.txt"
 #define DEFAULT_LISTEN_PORT 9090
 
 // --- MESSAGE TYPES ---
-#define MSG_REGISTER_REQ 1   
-#define MSG_REGISTER_RES 2   
-#define MSG_LOGIN_REQ 3      
-#define MSG_LOGIN_RES 4      
-#define MSG_LOGOUT_REQ 5     
-#define MSG_LOGOUT_RES 6     
+// Auth
+#define MSG_REGISTER_REQ 1
+#define MSG_REGISTER_RES 2
+#define MSG_LOGIN_REQ 3
+#define MSG_LOGIN_RES 4
+#define MSG_LOGOUT_REQ 5
+#define MSG_LOGOUT_RES 6
+#define MSG_SEND_CLIENT_INFO_REQ 7
+#define MSG_SEND_CLIENT_INFO_RES 8
 
-// --- STATUS CODES --- 
+// File
+#define MSG_SHARE_FILE_REQ 9
+#define MSG_SHARE_FILE_RES 10
+#define MSG_UNSHARE_FILE_REQ 11
+#define MSG_UNSHARE_FILE_RES 12
+#define MSG_SEARCH_FILE_REQ 13
+#define MSG_SEARCH_FILE_RES 14
+// Download
+#define MSG_P2P_DOWNLOAD_REQ 15
+#define MSG_P2P_DOWNLOAD_RES 16
+#define MSG_P2P_FILE_DATA 17
+#define MSG_P2P_ERROR 18
+
+// --- STATUS CODES ---
 // Generic codes
-#define STATUS_SUCCESS 1          
-#define STATUS_FAILURE 0   
+#define STATUS_SUCCESS 1
+#define STATUS_FAILURE 0
 
 // Authentication code
-#define STATUS_ERR_USERNAME_NOTFOUND 10 
-#define STATUS_ERR_BAD_CREDENTIALS 11   
+#define STATUS_ERR_USERNAME_NOTFOUND 10
+#define STATUS_ERR_BAD_CREDENTIALS 11
 #define STATUS_ERR_USERNAME_ALREADY_EXIST 12
-#define STATUS_ERR_ALREADY_LOGGED_IN 13 
+#define STATUS_ERR_ALREADY_LOGGED_IN 13
 
 // --- PACKET STRUCTURE ---
 // MESSAGE = [HEADER][PAYLOAD]
 #pragma pack(push, 1)
 
 // -- Header struct --
-typedef struct {
-    uint8_t msg_type;   // Message type 
-    uint16_t len;       // Payload length in bytes
+typedef struct
+{
+    uint8_t msg_type; // Message type
+    uint16_t len;     // Payload length in bytes
 } header_t;
 
-// -- Payload struct -- 
+// -- Payload struct --
 
 // 1. Authentication
-// Register request 
-typedef struct {
+// Register request
+typedef struct
+{
     char username[MAX_USERNAME_LEN];
     char password[MAX_PASSWORD_LEN];
 } register_req_t;
 
 // Register response
-typedef struct {
-    uint8_t status;  
+typedef struct
+{
+    uint8_t status;
 } register_res_t;
 
-// Login request 
-typedef struct {
+// Login request
+typedef struct
+{
     char username[MAX_USERNAME_LEN];
     char password[MAX_PASSWORD_LEN];
 } login_req_t;
 
-// Login response 
-typedef struct {
-    uint8_t status;  
+// Login response
+typedef struct
+{
+    uint8_t status;
 } login_response;
 
 // Logout request
-typedef struct {
-    char username[MAX_USERNAME_LEN]; 
+typedef struct
+{
+    char username[MAX_USERNAME_LEN];
 } logout_req_t;
 
 // Logout response
-typedef struct {
-    uint8_t status; 
+typedef struct
+{
+    uint8_t status;
 } logout_res_t;
 
 #pragma pack(pop)
