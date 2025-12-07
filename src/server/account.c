@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <string.h>
+#include <pthread.h>
+
 #include "account.h"
 
 static Account accounts[MAX_ACCOUNTS];  // Array to store accounts
 static int num_accounts = 0;            // Number of loaded accounts
-
+// Mutex for accounts
+static pthread_mutex_t accounts_mutex = PTHREAD_MUTEX_INITIALIZER;
 void load_accounts(){
     FILE *f = fopen(ACCOUNT_FILE, "r");
     if (f == NULL) {
@@ -23,7 +26,6 @@ void load_accounts(){
             if (sscanf(line, "%s %s", username, password) == 2) {
                 strcpy(accounts[num_accounts].username, username);
                 strcpy(accounts[num_accounts].password, password);
-                accounts[num_accounts].status = 0;
                 num_accounts ++;
             }
         }
@@ -44,18 +46,22 @@ static Account* find_account_by_username(char *username) {
     return NULL; 
 }
 
-void register_account(char *username, char *password){
+int register_account(char *username, char *password){
+    pthread_mutex_lock(&accounts_mutex);
     if (num_accounts >= MAX_ACCOUNTS) { // check if reach maximum number of accounts
+        pthread_mutex_unlock(&accounts_mutex);
         return DATABASE_FULL;
     }
 
     if (find_account_by_username(username) != NULL) { // check if username already taken
+        pthread_mutex_unlock(&accounts_mutex);
         return USERNAME_ALREADY_TAKEN;
     }
 
     // open file
     FILE *f = fopen(ACCOUNT_FILE, "a");
     if (f == NULL) {
+        pthread_mutex_unlock(&accounts_mutex);
         return SYSTEM_ERROR; 
     }
 
@@ -64,9 +70,9 @@ void register_account(char *username, char *password){
     // Update accounts in server 
     strcpy(accounts[num_accounts].username, username);
     strcpy(accounts[num_accounts].password, password);
-    accounts[num_accounts].status = 0;
     num_accounts++;
 
+    pthread_mutex_unlock(&accounts_mutex);
     return SUCCESS;
 }
 
@@ -80,21 +86,15 @@ int login_account(char *username, char *password) {
     if (strcmp(acc->password, password) != 0) {
         return BAD_CREDENTIALS; 
     }
-
-    if (acc->status == 1) {
-        return ALREADY_LOGGED_IN;
-    }
-
-    acc->status = 1;
+    
     return SUCCESS; 
 }
 
-int logout_account(const char* username){
+int logout_account(char* username){
     Account *acc = find_account_by_username(username);
     if (acc == NULL) {
         return USER_NOT_FOUND; 
     }
     
-    acc->status = 0;
     return SUCCESS;
 }

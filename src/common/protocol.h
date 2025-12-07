@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 
 // --- CONSTANTS ---
+#define MAX_CLIENTS 200
 #define MAX_ACCOUNTS 100
 #define MAX_USERNAME_LEN 32
 #define MAX_PASSWORD_LEN 32
@@ -50,58 +51,52 @@
 // Authentication code
 #define STATUS_ERR_USERNAME_NOTFOUND 10
 #define STATUS_ERR_BAD_CREDENTIALS 11
-#define STATUS_ERR_USERNAME_ALREADY_EXIST 12
+#define STATUS_ERR_USERNAME_ALREADY_TAKEN 12
 #define STATUS_ERR_ALREADY_LOGGED_IN 13
+#define STATUS_ERR_UNAUTHORIZED 14
 
 // --- PACKET STRUCTURE ---
 // MESSAGE = [HEADER][PAYLOAD]
 #pragma pack(push, 1)
 
 // -- Header struct --
-typedef struct
-{
-    uint8_t msg_type; // Message type
-    uint16_t payload_len;     // Payload length in bytes
-} header_t;
+typedef struct {
+    uint8_t msg_type;       // Message type
+    uint16_t payload_len;   // Payload length in bytes
+} header_t; 
 
 // -- Payload struct --
 
 // 1. Authentication
 // Register request
-typedef struct
-{
+typedef struct {
     char username[MAX_USERNAME_LEN];
     char password[MAX_PASSWORD_LEN];
 } register_req_t;
 
 // Register response
-typedef struct
-{
+typedef struct {
     uint8_t status;
 } register_res_t;
 
 // Login request
-typedef struct
-{
+typedef struct {
     char username[MAX_USERNAME_LEN];
     char password[MAX_PASSWORD_LEN];
 } login_req_t;
 
 // Login response
-typedef struct
-{
+typedef struct {
     uint8_t status;
 } login_response;
 
 // Logout request
-typedef struct
-{
+typedef struct {
     char username[MAX_USERNAME_LEN];
 } logout_req_t;
 
 // Logout response
-typedef struct
-{
+typedef struct {
     uint8_t status;
 } logout_res_t;
 
