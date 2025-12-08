@@ -12,7 +12,6 @@ void print_main_menu() {
     printf(" [2] Unshare a file\n");
     printf(" [3] Search for file\n");
     printf(" [4] Download file\n");
-    printf(" [5] Show my shared files (Local)\n");
     printf(" [0] Logout\n");
     printf("======================================\n");
 }
@@ -26,15 +25,6 @@ void print_auth_menu() {
     printf(" [2] Login\n");
     printf(" [0] Exit Application\n");
     printf("======================================\n");
-}
-void pause_screen(){
-    printf("\nPress Enter to continue...");
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF); // clean buffer
-}
-
-void clear_screen() {
-    system("clear");
 }
 
 int get_choice(){
