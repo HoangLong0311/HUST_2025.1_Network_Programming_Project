@@ -57,8 +57,6 @@
 
 // --- PACKET STRUCTURE ---
 // MESSAGE = [HEADER][PAYLOAD]
-#pragma pack(push, 1)
-
 // -- Header struct --
 typedef struct {
     uint8_t msg_type;       // Message type
@@ -88,7 +86,7 @@ typedef struct {
 // Login response
 typedef struct {
     uint8_t status;
-} login_response;
+} login_res_t;
 
 // Logout request
 typedef struct {
@@ -99,7 +97,5 @@ typedef struct {
 typedef struct {
     uint8_t status;
 } logout_res_t;
-
-#pragma pack(pop)
 
 #endif

@@ -11,8 +11,7 @@ static pthread_mutex_t accounts_mutex = PTHREAD_MUTEX_INITIALIZER;
 void load_accounts(){
     FILE *f = fopen(ACCOUNT_FILE, "r");
     if (f == NULL) {
-        f = fopen(ACCOUNT_FILE, "w"); 
-        if (f) fclose(f);
+        printf("Cannot open file.");
         return; 
     }
 

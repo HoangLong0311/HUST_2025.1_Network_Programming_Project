@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in server_addr;
 
     if ((client_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        perror("socket()");
+        perror("socket() error");
         exit(EXIT_FAILURE);
     }
 
@@ -36,12 +36,12 @@ int main(int argc, char *argv[]) {
     server_addr.sin_port = htons(port);
 
     if (inet_pton(AF_INET, ip_addr, &server_addr.sin_addr) <= 0) {
-        perror("inet_pton()");
+        perror("inet_pton() error");
         exit(EXIT_FAILURE);
     }
 
     if (connect(client_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
-        perror("connect()");
+        perror("connect() error");
         exit(EXIT_FAILURE);
     }
 

@@ -15,7 +15,7 @@ int send_all(int sockfd, void *data, size_t len) {
     while (total_sent < len) {
         n = send(sockfd, ptr + total_sent, bytes_left, 0);
         if (n == -1) { 
-            perror("send_all() error"); 
+            perror("send() error"); 
             return -1; 
         }
         total_sent += n;
@@ -33,7 +33,7 @@ int recv_all(int sockfd, void *data, size_t len) {
     while (total_received < len) {
         n = recv(sockfd, ptr + total_received, bytes_left, 0);
         if (n == -1) { 
-            perror("recv_all()"); 
+            perror("recv() error"); 
             return -1; 
         }
         if (n == 0) return 0; 
@@ -48,7 +48,7 @@ int send_message(int sockfd, uint8_t msg_type, void *payload, uint16_t payload_l
     header_t header;
 
     header.msg_type = msg_type;
-    header.payload_len = htons(payload_len);
+    header.payload_len = payload_len;
 
     // send header
     if (send_all(sockfd, &header, sizeof(header_t)) == -1) {
@@ -70,31 +70,31 @@ int recv_message(int sockfd, uint8_t *msg_type, void **payload) {
     int ret = recv_all(sockfd, &header, sizeof(header_t));
     if (ret <= 0) return ret; 
 
-    // 2. Extract metadata from header
+    // Extract metadata from header
     *msg_type = header.msg_type;
     
-    uint16_t actual_len = ntohs(header.payload_len);
+    uint16_t payload_len = header.payload_len;
 
-    // 3. Receive payload
-    if (actual_len > 0) {
-        *payload = malloc(actual_len + 1); 
+    // Receive payload
+    if (payload_len > 0) {
+        *payload = malloc(payload_len + 1); 
         if (*payload == NULL) {
             perror("malloc() error");
             return -1;
         }
 
         // Receive data
-        if (recv_all(sockfd, *payload, actual_len) <= 0) {
+        if (recv_all(sockfd, *payload, payload_len) <= 0) {
             free(*payload); // Free if get error
             *payload = NULL;
             return -1;
         }
 
         // Append null-terminator 
-        ((char*)*payload)[actual_len] = '\0';
+        ((char*)*payload)[payload_len] = '\0';
     } else {
         *payload = NULL;
     }
 
-    return (int) actual_len;
+    return (int) payload_len;
 }

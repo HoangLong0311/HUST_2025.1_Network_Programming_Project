@@ -123,7 +123,7 @@ void handle_register(int sock, register_req_t *req) {
 }
 
 void handle_login(int sock, login_req_t *req) {
-    login_response res; 
+    login_res_t res; 
     
     int result = login_account(req->username, req->password);
     
