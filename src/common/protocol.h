@@ -21,10 +21,10 @@
 
 // --- MESSAGE TYPES ---
 // Auth
-#define MSG_REGISTER_REQ 1
-#define MSG_REGISTER_RES 2
-#define MSG_LOGIN_REQ 3
-#define MSG_LOGIN_RES 4
+#define MSG_LOGIN_REQ 1
+#define MSG_LOGIN_RES 2
+#define MSG_REGISTER_REQ 3
+#define MSG_REGISTER_RES 4
 #define MSG_LOGOUT_REQ 5
 #define MSG_LOGOUT_RES 6
 #define MSG_SEND_CLIENT_INFO_REQ 7
@@ -47,6 +47,7 @@
 // Generic codes
 #define STATUS_SUCCESS 1
 #define STATUS_FAILURE 0
+#define STATUS_ERR_FAILURE 2
 
 // Authentication code
 #define STATUS_ERR_USERNAME_NOTFOUND 10

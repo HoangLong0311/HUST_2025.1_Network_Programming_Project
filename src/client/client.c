@@ -70,6 +70,58 @@ void do_register(){
 }
 
 void do_login(){
+    login_req_t req;
+    login_res_t res;
+    uint8_t msg_type;
+    void *payload = NULL;
 
+    printf("--- LOGIN ---\n");
+    printf("Username: ");
+    scanf("%s", req.username);
+    printf("Password: ");
+    scanf("%s", req.password);
+
+    // Send login request
+    if (send_message(client_sock, MSG_LOGIN_REQ, &req, sizeof(req)) < 0) {
+        printf("Error sending login request\n");
+        return;
+    }
+
+    // Receive login response
+    if (recv_message(client_sock, &msg_type, &payload) < 0) {
+        printf("Error receiving login response\n");
+        return;
+    }
+
+    if (msg_type == MSG_LOGIN_RES && payload != NULL) {
+        memcpy(&res, payload, sizeof(res));
+        
+        switch (res.status) {
+            case STATUS_SUCCESS:
+                printf("Login successful!\n");
+                strcpy(current_user, req.username);
+                is_logged_in = 1;
+                break;
+            case STATUS_ERR_USERNAME_NOTFOUND:
+                printf("Error: Username not found\n");
+                break;
+            case STATUS_ERR_BAD_CREDENTIALS:
+                printf("Error: Incorrect password\n");
+                break;
+            case STATUS_ERR_ALREADY_LOGGED_IN:
+                printf("Error: User already logged in\n");
+                break;
+            case STATUS_ERR_FAILURE:
+                printf("Error: Login failed\n");
+                break;
+            default:
+                printf("Error: Unknown status code %d\n", res.status);
+                break;
+        }
+    }
+
+    if (payload) {
+        free(payload);
+    }
 }
 

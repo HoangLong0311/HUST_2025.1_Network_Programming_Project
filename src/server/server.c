@@ -72,7 +72,7 @@ int main(int argc, char *argv[]){
             pthread_create(&tid, NULL, &handle_client, (void*)(intptr_t)client_sock);
         }
     }
-    clost(server_sock);
+    close(server_sock);
 }
 
 void handle_client(void *arg) {
@@ -84,13 +84,13 @@ void handle_client(void *arg) {
     void *payload = NULL; 
     int len;
 
-    while ((len = receive_message(sock, &msg_type, &payload)) > 0) {
+    while ((len = recv_message(sock, &msg_type, &payload)) > 0) {
         switch(msg_type) {
-            case MSG_REGISTER_REQ: 
-                handle_register(sock, (register_req_t *)payload);
-                break;
             case MSG_LOGIN_REQ: 
                 handle_login(sock, (login_req_t *)payload);
+                break;
+            case MSG_REGISTER_REQ: 
+                handle_register(sock, (register_req_t *)payload);
                 break;
             case MSG_LOGOUT_REQ:
                 handle_logout(sock, (logout_req_t *)payload);
@@ -104,7 +104,7 @@ void handle_client(void *arg) {
 
     printf("Socket %d disconnected.\n", sock);
     remove_session(sock);
-    thread_detach(pthread_self());
+    pthread_detach(pthread_self());
     close(sock);
     pthread_exit(NULL);
 }
@@ -114,9 +114,15 @@ void handle_register(int sock, register_req_t *req) {
     
     int ret = register_account(req->username, req->password);
     switch (ret) {
-        case SUCCESS: res.status = STATUS_SUCCESS;
-        case USERNAME_ALREADY_TAKEN: res.status = STATUS_ERR_USERNAME_ALREADY_TAKEN;
-        default: res.status = STATUS_FAILURE;
+        case SUCCESS: 
+            res.status = STATUS_SUCCESS;
+            break;
+        case USERNAME_ALREADY_TAKEN: 
+            res.status = STATUS_ERR_USERNAME_ALREADY_TAKEN;
+            break;
+        default: 
+            res.status = STATUS_FAILURE;
+            break;
     }
     // Send reply to client
     send_message(sock, MSG_REGISTER_RES, &res, sizeof(res));
@@ -135,17 +141,21 @@ void handle_login(int sock, login_req_t *req) {
                 int session_idx = add_session(sock, req->username);
 
                 if (session_idx == -1){
-                    res.status = STATUS_FAILURE;
+                    res.status = STATUS_ERR_FAILURE;
                 } else {
                     res.status = STATUS_SUCCESS;
                 }
             }
+            break;
         case USER_NOT_FOUND:
             res.status = STATUS_ERR_USERNAME_NOTFOUND;
+            break;
         case BAD_CREDENTIALS:
             res.status = STATUS_ERR_BAD_CREDENTIALS;
+            break;
         default:
-            res.status = STATUS_FAILURE;
+            res.status = STATUS_ERR_FAILURE;
+            break;
     }
 
     // Send reply to client
