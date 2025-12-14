@@ -9,12 +9,14 @@
 #include "account.h"   
 #include "protocol.h"
 #include "network_utils.h"
+#include "index.h"
 
 void handle_client(void *arg);
 
 void handle_register(int sock, register_req_t *req);
 void handle_login(int sock, login_req_t *req);
 void handle_logout(int sock, logout_req_t *req);
+void handle_share_file_req(int sock, share_file_req_t *req);
 
 int main(int argc, char *argv[]){
     int server_sock, client_sock;
@@ -94,6 +96,8 @@ void handle_client(void *arg) {
                 break;
             case MSG_LOGOUT_REQ:
                 handle_logout(sock, (logout_req_t *)payload);
+            case MSG_SHARE_FILE_REQ: 
+                handle_share_file(sock, (share_file_req_t *)payload);
         }
         // Clean payload
         if (payload) {
@@ -173,4 +177,28 @@ void handle_logout(int sock, logout_req_t *req) {
 
     // Gửi phản hồi về Client
     send_message(sock, MSG_LOGOUT_RES, &res, sizeof(res));
+}
+
+void handle_share_file_req(int sock, share_file_req_t *req){
+    share_file_res_t res;
+
+    // add file to index db
+    int ret = add_file(req->client_id, req->file_name);
+    switch (ret) {
+    case SUCCESS:
+        res.status = STATUS_SUCCESS;
+        break;
+    case PEER_NOT_FOUND:
+        res.status = STATUS_FAILURE;
+        break; 
+    case FILE_ALREADY_SHARED:
+        res.status = STATUS_ERR_FILE_ALREADY_SHARED;
+        break;
+    default:
+        res.status = STATUS_FAILURE;
+        break;
+    }
+
+    // send message
+    send_message(sock, MSG_SHARE_FILE_RES, &res, sizeof(res));
 }

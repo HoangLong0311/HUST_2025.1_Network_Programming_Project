@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "index.h"
+
+static PeerNode *head = NULL;
+
+static PeerNode* find_peer_by_id(uint32_t client_id){
+    PeerNode *cur = head;
+    while (cur != NULL){
+        if (cur->client_id == client_id){
+            return cur;
+        }
+        cur = cur->next;
+    }
+    return NULL;
+}
+
+int add_file(uint32_t client_id, char *file_name){
+    // find peer
+    PeerNode *peer;
+    if ((peer = find_peer_by_id(client_id)) == NULL) {
+        return PEER_NOT_FOUND;
+    }
+    
+    // check duplicated
+    for (int i = 0; i < peer->file_count; ++i) {
+        if (strcmp(peer->files[i].file_name, file_name) == 0) {
+            return FILE_ALREADY_SHARED;
+        }
+    }
+
+    // append to files
+    int idx = peer->file_count;
+    strcpy(peer->files[idx].file_name, file_name);
+    peer->file_count++;
+    return SUCCESS;
+}

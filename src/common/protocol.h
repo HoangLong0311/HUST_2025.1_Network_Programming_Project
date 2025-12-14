@@ -7,6 +7,9 @@
 // --- CONSTANTS ---
 #define MAX_CLIENTS 200
 #define MAX_ACCOUNTS 100
+#define MAX_FILENAME_LEN 256
+#define MAX_FILEPATH_LEN 256
+#define MAX_FILES_PER_PEER 15
 #define MAX_USERNAME_LEN 32
 #define MAX_PASSWORD_LEN 32
 #define MAX_IP_LEN INET_ADDRSTRLEN
@@ -14,6 +17,7 @@
 
 #define CONFIG_FILE "config.txt"
 #define ACCOUNT_FILE "account.txt"
+#define INDEX_FILE "index.txt"
 
 #define SERVER_PORT 5000
 #define BACKLOG 10
@@ -54,6 +58,9 @@
 #define STATUS_ERR_USERNAME_ALREADY_TAKEN 12
 #define STATUS_ERR_ALREADY_LOGGED_IN 13
 #define STATUS_ERR_UNAUTHORIZED 14
+
+// File related code
+#define STATUS_ERR_FILE_ALREADY_SHARED 15
 
 // --- PACKET STRUCTURE ---
 // MESSAGE = [HEADER][PAYLOAD]
@@ -98,4 +105,14 @@ typedef struct {
     uint8_t status;
 } logout_res_t;
 
+// 2. File management
+
+typedef struct {
+    uint32_t client_id;
+    char file_name[MAX_FILENAME_LEN];
+} share_file_req_t;
+
+typedef struct {
+    uint8_t status; 
+} share_file_res_t;
 #endif
