@@ -64,25 +64,28 @@ int main(int argc, char *argv[]){
     while(1) {
         if ((client_sock = accept(server_sock, (struct sockaddr*)&client_addr, (socklen_t*) &sin_size)) == -1) {
             perror("accept() error");
-        } else {
-            char client_ip[MAX_IP_LEN];
-            if (inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, MAX_IP_LEN) == NULL){
-                perror("inet_ntop() error:");
-            } else {
-                int client_port = ntohs(client_addr.sin_port);
-                printf("New connection from %s:%d\n", client_ip, client_port);
-            }
-            pthread_create(&tid, NULL, &handle_client, (void*)(intptr_t)client_sock);
-        }
+        } 
+        client_info_t *client_info = malloc(sizeof(client_info_t));
+        client_info->sock = client_sock; 
+        if (inet_ntop(AF_INET, &client_addr.sin_addr, client_info->ip, MAX_IP_LEN) == NULL){
+            perror("inet_ntop() error:");
+        } 
+        int client_port = ntohs(client_addr.sin_port);
+        printf("New connection from %s:%d\n", client_info->ip, client_port);
+        
+        pthread_create(&tid, NULL, &handle_client, (void*)client_info);
+        free(client_info);
     }
     clost(server_sock);
 }
 
 void handle_client(void *arg) {
-    char buffer[BUFFER_SIZE];
+    client_info_t *client_info = (client_info_t*) arg;
+    int sock = client_info->sock;
     char client_ip[MAX_IP_LEN];
-    int sock = (int)(intptr_t) arg;
+    strcpy(client_ip, client_info->ip);
     free(arg);
+    free(client_info);
     
     uint8_t msg_type;
     void *payload = NULL; 
@@ -185,9 +188,7 @@ void handle_register_p2p_port(int sock, register_p2p_port_req_t *req){
     char client_ip[MAX_IP_LEN];
 
     memset(&res, 0, sizeof(res));
-
-    // get client ip address 
-    if (inet_ntop(AF_INET, ))
+    
 }
 
 void handle_share_file(int sock, share_file_req_t *req){
