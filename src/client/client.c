@@ -11,7 +11,7 @@
 int client_sock; 
 uint32_t client_id;
 char current_user[MAX_USERNAME_LEN];
-int is_logged_in = 0;
+int is_logged_in = 1;
 
 void do_register();
 void do_login();
