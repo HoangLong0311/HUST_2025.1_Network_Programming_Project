@@ -16,7 +16,8 @@ void handle_client(void *arg);
 void handle_register(int sock, register_req_t *req);
 void handle_login(int sock, login_req_t *req);
 void handle_logout(int sock, logout_req_t *req);
-void handle_share_file_req(int sock, share_file_req_t *req);
+void handle_register_p2p_port(int sock, register_p2p_port_req_t *req);
+void handle_share_file(int sock, share_file_req_t *req);
 
 int main(int argc, char *argv[]){
     int server_sock, client_sock;
@@ -79,13 +80,14 @@ int main(int argc, char *argv[]){
 
 void handle_client(void *arg) {
     char buffer[BUFFER_SIZE];
+    char client_ip[MAX_IP_LEN];
     int sock = (int)(intptr_t) arg;
     free(arg);
     
     uint8_t msg_type;
     void *payload = NULL; 
     int len;
-
+    
     while ((len = receive_message(sock, &msg_type, &payload)) > 0) {
         switch(msg_type) {
             case MSG_REGISTER_REQ: 
@@ -174,14 +176,23 @@ void handle_logout(int sock, logout_req_t *req) {
     else {
         res.status = STATUS_ERR_USERNAME_NOTFOUND;
     }
-
-    // Gửi phản hồi về Client
+    // send reply to client
     send_message(sock, MSG_LOGOUT_RES, &res, sizeof(res));
 }
 
-void handle_share_file_req(int sock, share_file_req_t *req){
-    share_file_res_t res;
+void handle_register_p2p_port(int sock, register_p2p_port_req_t *req){
+    register_p2p_port_res_t res;
+    char client_ip[MAX_IP_LEN];
 
+    memset(&res, 0, sizeof(res));
+
+    // get client ip address 
+    if (inet_ntop(AF_INET, ))
+}
+
+void handle_share_file(int sock, share_file_req_t *req){
+    share_file_res_t res;
+    memset(&res, 0, sizeof(res));
     // add file to index db
     int ret = add_file(req->client_id, req->file_name);
     switch (ret) {
