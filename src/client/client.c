@@ -16,6 +16,7 @@ int is_logged_in = 1;
 void do_register();
 void do_login();
 void do_share_file();
+void do_register_peer();
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
@@ -48,6 +49,7 @@ int main(int argc, char *argv[]) {
     }
 
     int option;
+    do_register_peer();
     // Main  loop
     while (1) {
         if (!is_logged_in) {
@@ -80,24 +82,24 @@ void do_login(){
 
 }
 
-void do_register_p2p_port(){
+void do_register_peer(){
     uint16_t p2p_port;
     char buffer[10];
 
-    printf("\n--- REGISTER P2P PORT ---\n");
+    printf("\n--- REGISTER PEER ---\n");
 
     // Get port from stdin
     get_input("Enter a port to listen P2P requests: ", buffer, sizeof(buffer));
     p2p_port = (uint16_t) atoi(buffer);
 
     // Send request 
-    register_p2p_port_req_t req; 
+    register_peer_req_t req; 
     memset(&req, 0, sizeof(req));
 
     req.client_id = htonl(client_id); 
     req.p2p_port = htons(p2p_port);
     
-    if (send_message(server_sock, MSG_REGISTER_P2P_POR_REQ, &req, sizeof(req)) < 0){
+    if (send_message(server_sock, MSG_REGISTER_PEER_REQ, &req, sizeof(req)) < 0){
         perror("send_message() error"); 
     }
 }

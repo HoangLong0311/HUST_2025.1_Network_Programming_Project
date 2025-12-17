@@ -16,6 +16,23 @@ static PeerNode* find_peer_by_id(uint32_t client_id){
     return NULL;
 }
 
+static int add_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port){
+    // find duplicated
+    PeerNode *peer;
+    if ((peer = find_peer_by_id(client_id)) != NULL) {
+        return CLIENT_ID_ALREADY_EXISTS;
+    }
+    // create new peer
+    PeerNode *newPeer = (PeerNode *) malloc(sizeof(PeerNode));
+    memset(&newPeer, 0, sizeof(newPeer));
+    strcpy(newPeer->client_ip, client_ip);
+    newPeer->p2p_port = p2p_port;
+    // update head 
+    newPeer->next = head; 
+    head = newPeer;
+    return SUCCESS;
+}
+
 int add_file(uint32_t client_id, char *file_name){
     // find peer
     PeerNode *peer;
@@ -37,30 +54,16 @@ int add_file(uint32_t client_id, char *file_name){
     return SUCCESS;
 }
 
-int add_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port){
-    // find duplicated
-    PeerNode *peer;
-    if ((peer = find_peer_by_id(client_id)) != NULL) {
-        return CLIENT_ID_ALREADY_EXISTS;
-    }
-    // create new peer
-    PeerNode *newPeer = (PeerNode *) malloc(sizeof(PeerNode));
-    memset(&newPeer, 0, sizeof(newPeer));
-    strcpy(newPeer->client_ip, client_ip);
-    newPeer->p2p_port = p2p_port;
-    // update head 
-    newPeer->next = head; 
-    head = newPeer;
-    return SUCCESS;
-}
 
-int update_peer(uint32_t client_id, uint16_t p2p_port){
+int register_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port){
     // find duplicated
     PeerNode *peer;
-    if ((peer = find_peer_by_id(client_id)) != NULL) {
-        return CLIENT_ID_ALREADY_EXISTS;
-    }
+    if ((peer = find_peer_by_id(client_id)) == NULL) {
+        add_peer(client_id, client_ip, p2p_port);
+        return SUCCESS;
+    } 
     peer->p2p_port = p2p_port;
+    strcpy(peer->client_ip, client_ip);
     return SUCCESS;
 }
 

@@ -8,7 +8,7 @@ void print_main_menu() {
     printf("======================================\n");
     printf("      P2P FILE SHARING SYSTEM\n");
     printf("======================================\n");
-    printf(" [1] Register a p2p port\n");
+    printf(" [1] Register peer info\n");
     printf(" [2] Share a file\n");
     printf(" [3] Unshare a file\n");
     printf(" [4] Search for file\n");

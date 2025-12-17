@@ -9,7 +9,7 @@
 #define SUCCESS 1
 #define PEER_NOT_FOUND -1
 #define FILE_ALREADY_SHARED -2
-#define CLIENT_ID_ALREADY_EXISTS
+#define CLIENT_ID_ALREADY_EXISTS -3
 
 typedef struct {
     char file_name[MAX_FILENAME_LEN];
@@ -26,8 +26,6 @@ typedef struct {
 
 int add_file(uint32_t client_id, char *file_name);
 
-int add_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port);
-
-int update_peer(uint32_t client_id, uint16_t p2p_port);
+int register_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port);
 
 #endif
