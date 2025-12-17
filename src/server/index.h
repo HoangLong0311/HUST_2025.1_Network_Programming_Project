@@ -26,7 +26,7 @@ typedef struct {
 
 int add_file(uint32_t client_id, char *file_name);
 
-int add_peer(uint32_t client_id, uint16_t p2p_port);
+int add_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port);
 
 int update_peer(uint32_t client_id, uint16_t p2p_port);
 
