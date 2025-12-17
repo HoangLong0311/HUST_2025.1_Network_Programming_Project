@@ -62,6 +62,12 @@
 // File related code
 #define STATUS_ERR_FILE_ALREADY_SHARED 15
 
+// Client's info  
+typedef struct {
+    int sock;             
+    char ip[16];        
+} client_info_t;
+
 // --- PACKET STRUCTURE ---
 // MESSAGE = [HEADER][PAYLOAD]
 // -- Header struct --
