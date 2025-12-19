@@ -16,7 +16,8 @@ void handle_client(void *arg);
 void handle_register(int sock, register_req_t *req);
 void handle_login(int sock, login_req_t *req);
 void handle_logout(int sock, logout_req_t *req);
-void handle_share_file_req(int sock, share_file_req_t *req);
+void handle_register_peer(int sock, char* client_ip, register_peer_req_t *req);
+void handle_share_file(int sock, share_file_req_t *req);
 
 int main(int argc, char *argv[]){
     int server_sock, client_sock;
@@ -89,17 +90,19 @@ void handle_client(void *arg) {
     uint8_t msg_type;
     void *payload = NULL; 
     int len;
-
+    
     while ((len = receive_message(sock, &msg_type, &payload)) > 0) {
         switch(msg_type) {
             case MSG_REGISTER_REQ: 
-                handle_register(sock, (register_req_t *)payload);
+                handle_register(sock, (register_req_t *) payload);
                 break;
             case MSG_LOGIN_REQ: 
-                handle_login(sock, (login_req_t *)payload);
+                handle_login(sock, (login_req_t *) payload);
                 break;
             case MSG_LOGOUT_REQ:
-                handle_logout(sock, (logout_req_t *)payload);
+                handle_logout(sock, (logout_req_t *) payload);
+            case MSG_REGISTER_PEER_REQ: 
+                handle_register_p2p_port(sock, client_ip, (register_peer_req_t*) payload);
             case MSG_SHARE_FILE_REQ: 
                 handle_share_file(sock, (share_file_req_t *)payload);
         }
@@ -178,14 +181,32 @@ void handle_logout(int sock, logout_req_t *req) {
     else {
         res.status = STATUS_ERR_USERNAME_NOTFOUND;
     }
-
-    // Gửi phản hồi về Client
+    // send reply to client
     send_message(sock, MSG_LOGOUT_RES, &res, sizeof(res));
 }
 
-void handle_share_file_req(int sock, share_file_req_t *req){
-    share_file_res_t res;
+void handle_register_peer(int sock, char* client_ip, register_peer_req_t *req){
+    register_peer_res_t res;
+    memset(&res, 0, sizeof(res));
 
+    int ret = register_peer(req->client_id, client_ip, req->p2p_port);
+    switch(ret) {
+        case SUCCESS: 
+            res.status = STATUS_SUCCESS;
+            break;
+        case CLIENT_ID_ALREADY_EXISTS: 
+            res.status = STATUS_ERR_DUPLICATED_PEER;
+        default: 
+            res.status = STATUS_FAILURE;
+            break;
+    }
+
+    send_message(sock, MSG_REGISTER_PEER_RES, &res, sizeof(res));
+}
+
+void handle_share_file(int sock, share_file_req_t *req){
+    share_file_res_t res;
+    memset(&res, 0, sizeof(res));
     // add file to index db
     int ret = add_file(req->client_id, req->file_name);
     switch (ret) {

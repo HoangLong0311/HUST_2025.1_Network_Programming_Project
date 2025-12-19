@@ -8,14 +8,15 @@
 #include "protocol.h"
 #include "network_utils.h"
 
-int client_sock; 
+int server_sock; 
 uint32_t client_id;
 char current_user[MAX_USERNAME_LEN];
-int is_logged_in = 0;
+int is_logged_in = 1;
 
 void do_register();
 void do_login();
 void do_share_file();
+void do_register_peer();
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
@@ -28,7 +29,7 @@ int main(int argc, char *argv[]) {
 
     struct sockaddr_in server_addr;
 
-    if ((client_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((server_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket() error");
         exit(EXIT_FAILURE);
     }
@@ -42,12 +43,13 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    if (connect(client_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
+    if (connect(server_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
         perror("connect() error");
         exit(EXIT_FAILURE);
     }
 
     int option;
+    do_register_peer();
     // Main  loop
     while (1) {
         if (!is_logged_in) {
@@ -61,12 +63,14 @@ int main(int argc, char *argv[]) {
             print_main_menu();
             option = getOption();
             switch (option) {
-                case 1: do_share_file(); break;
+                case 1: do_register_p2p_port(); break;
+                case 2: do_share_file(); break;
+                case 3: do_unshare_file(); break;
             }
         }
     }
 
-    close(client_sock);
+    close(server_sock);
     return 0;
 }
 
@@ -76,6 +80,28 @@ void do_register(){
 
 void do_login(){
 
+}
+
+void do_register_peer(){
+    uint16_t p2p_port;
+    char buffer[10];
+
+    printf("\n--- REGISTER PEER ---\n");
+
+    // Get port from stdin
+    get_input("Enter a port to listen P2P requests: ", buffer, sizeof(buffer));
+    p2p_port = (uint16_t) atoi(buffer);
+
+    // Send request 
+    register_peer_req_t req; 
+    memset(&req, 0, sizeof(req));
+
+    req.client_id = htonl(client_id); 
+    req.p2p_port = htons(p2p_port);
+    
+    if (send_message(server_sock, MSG_REGISTER_PEER_REQ, &req, sizeof(req)) < 0){
+        perror("send_message() error"); 
+    }
 }
 
 void do_share_file(){
@@ -104,11 +130,11 @@ void do_share_file(){
     share_file_req_t req; 
     memset(&req, 0, sizeof(req));
 
-    req.client_id = client_id;
+    req.client_id = htonl(client_id);
     strcpy(req.file_name, file_name);
 
     // Send 
-    if (send_message(client_sock, MSG_SHARE_FILE_REQ, &req, sizeof(req)) < 0) {
+    if (send_message(server_sock, MSG_SHARE_FILE_REQ, &req, sizeof(req)) < 0) {
         perror("send_message() error"); 
     } 
 }
