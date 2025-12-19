@@ -137,6 +137,6 @@ typedef struct {
     uint8_t status; 
 } share_file_res_t;
 
-#pragma pack(pop);
+#pragma pack(pop)
 
 #endif

@@ -2,6 +2,7 @@
 #define NETWORK_UTILS_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 int send_all(int sockfd, void *data, size_t len);
 int recv_all(int sockfd, void *data, size_t len);
