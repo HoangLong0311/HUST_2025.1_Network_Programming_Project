@@ -71,6 +71,8 @@ typedef struct {
     char ip[16];        
 } client_info_t;
 
+# pragma pack(push, 1)
+
 // --- PACKET STRUCTURE ---
 // MESSAGE = [HEADER][PAYLOAD]
 // -- Header struct --
