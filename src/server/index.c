@@ -16,7 +16,7 @@ static PeerNode* find_peer_by_id(uint32_t client_id){
     return NULL;
 }
 
-static int add_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port){
+int add_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port){
     // find duplicated
     PeerNode *peer;
     if ((peer = find_peer_by_id(client_id)) != NULL) {
