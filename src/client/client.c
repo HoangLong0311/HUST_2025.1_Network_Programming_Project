@@ -93,7 +93,7 @@ void do_register_peer(){
     p2p_port = (uint16_t) atoi(buffer);
 
     // Send request 
-    register_peer_req_t req; 
+    peer_info_t req; 
     memset(&req, 0, sizeof(req));
 
     req.client_id = htonl(client_id); 
@@ -101,6 +101,32 @@ void do_register_peer(){
     
     if (send_message(server_sock, MSG_REGISTER_PEER_REQ, &req, sizeof(req)) < 0){
         perror("send_message() error"); 
+    }
+
+    int len;
+    void *payload = NULL;
+    uint8_t msg_type; 
+
+    while((len = recv_message(server_sock, &msg_type, &payload)) > 0){
+        if (msg_type == "MSG_REGISTER_PEER_RES") {
+            register_peer_res_t *res = (register_peer_res_t *)payload;
+            switch(res->status){
+                case STATUS_SUCCESS:
+                    // Todo: start port ???/
+                    printf("Successfully registered P2P Port. Listening on port %d...\n", p2p_port);
+                    break;
+                case STATUS_ERR_PEER_NOT_FOUND:
+                    printf("Unable to find a peer with your client ID. Please restart the application.\n");
+                    break;
+                default: 
+                    printf("An unexpected error occurred.\n");
+                    break;
+            }
+        }
+    }
+    if (payload) {
+        free(payload);
+        payload = NULL;
     }
 }
 

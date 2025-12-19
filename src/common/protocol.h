@@ -63,13 +63,16 @@
 
 // P2P
 #define STATUS_ERR_DUPLICATED_PEER 15
-#define STATUS_ERR_FILE_ALREADY_SHARED 16
+#define STATUS_ERR_PEER_NOT_FOUND 16
+#define STATUS_ERR_FILE_ALREADY_SHARED 17
 
 // Client's info  
 typedef struct {
     int sock;             
     char ip[16];        
 } client_info_t;
+
+# pragma pack(push, 1)
 
 // --- PACKET STRUCTURE ---
 // MESSAGE = [HEADER][PAYLOAD]
@@ -119,7 +122,7 @@ typedef struct {
 typedef struct {
     uint32_t client_id;
     uint16_t p2p_port;
-} register_peer_req_t;
+} peer_info_t;
 
 typedef struct {
     uint8_t status; 

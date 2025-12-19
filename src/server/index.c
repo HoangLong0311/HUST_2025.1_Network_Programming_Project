@@ -16,7 +16,7 @@ static PeerNode* find_peer_by_id(uint32_t client_id){
     return NULL;
 }
 
-int add_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port){
+int init_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port){
     // find duplicated
     PeerNode *peer;
     if ((peer = find_peer_by_id(client_id)) != NULL) {
@@ -57,10 +57,9 @@ int add_file(uint32_t client_id, char *file_name){
 
 int register_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port){
     // find duplicated
-    PeerNode *peer;
+        PeerNode *peer;
     if ((peer = find_peer_by_id(client_id)) == NULL) {
-        add_peer(client_id, client_ip, p2p_port);
-        return SUCCESS;
+        return PEER_NOT_FOUND;
     } 
     peer->p2p_port = p2p_port;
     strcpy(peer->client_ip, client_ip);

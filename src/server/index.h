@@ -24,7 +24,7 @@ typedef struct {
     struct PeerNode *next;
 } PeerNode;
 
-int add_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port);
+int init_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port);
 
 int add_file(uint32_t client_id, char *file_name);
 
