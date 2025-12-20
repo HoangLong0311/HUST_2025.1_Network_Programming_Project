@@ -81,7 +81,6 @@ void *handle_client(void *arg) {
     int sock = client_info->sock;
     char client_ip[MAX_IP_LEN];
     strcpy(client_ip, client_info->ip);
-    free(arg);
     free(client_info);
     
     uint8_t msg_type;
