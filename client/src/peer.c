@@ -20,7 +20,7 @@ void do_register_peer(int server_sock, uint32_t client_id){
     p2p_port = (uint16_t) atoi(buffer);
 
     // Send request 
-    register_peer_req_t req; 
+    peer_info_t req; 
     memset(&req, 0, sizeof(req));
 
     req.client_id = htonl(client_id); 
