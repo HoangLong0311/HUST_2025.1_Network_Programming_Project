@@ -77,6 +77,6 @@ void init_sample_data() {
     test_node->next = NULL;
     head = test_node; 
 
-    printf("Test node initialized: Client ID %u is listening at %s:%d\n", 
+    printf("Test node initialized: Client ID %u is listening on %s:%d\n", 
             head->client_id, head->client_ip, head->p2p_port);
 }
