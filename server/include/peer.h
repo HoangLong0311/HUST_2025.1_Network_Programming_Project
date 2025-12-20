@@ -3,6 +3,6 @@
 
 #include "protocol.h"
 
-void handle_register_peer(int sock, char* client_ip, register_peer_req_t *req);
+void handle_register_peer(int sock, char* client_ip, peer_info_t* req);
 
 #endif

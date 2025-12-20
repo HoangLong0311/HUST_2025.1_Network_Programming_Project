@@ -2,7 +2,7 @@
 #include "index.h"
 #include "network_utils.h"
 
-void handle_register_peer(int sock, char* client_ip, register_peer_req_t *req){
+void handle_register_peer(int sock, char *client_ip, peer_info_t *req){
     register_peer_res_t res;
     memset(&res, 0, sizeof(res));
 
