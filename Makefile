@@ -9,6 +9,7 @@ CLIENT_CFLAGS = $(COMMON_CFLAGS) -Iclient/include
 # Define Directory
 BUILD_DIR = build
 BIN_DIR = bin
+TEST_DIR = test
 
 # Define Sources
 COMMON_SRCS = $(wildcard common/*.c)
@@ -31,17 +32,20 @@ all: build
 
 build: $(SERVER_EXEC) $(CLIENT_EXEC)
 
+test: 
+	@mkdir -p $(TEST_DIR)/client1
+	@cp $(CLIENT_EXEC) $(TEST_DIR)/client1/
+	@mkdir -p $(TEST_DIR)/client2
+	@cp $(CLIENT_EXEC) $(TEST_DIR)/client2/
 ## Link server app
 $(SERVER_EXEC): $(SERVER_OBJS) $(COMMON_OBJS)
 	@mkdir -p $(BIN_DIR)
-	@echo "Linking Server..."
 	$(CC) $(SERVER_CFLAGS) -o $@ $^
 	@echo "Server built successfully!"
 
 ## Link client app
 $(CLIENT_EXEC): $(CLIENT_OBJS) $(COMMON_OBJS)
 	@mkdir -p $(BIN_DIR)
-	@echo "Linking Client..."
 	$(CC) $(CLIENT_CFLAGS) -o $@ $^
 	@echo "Client built successfully!"
 
@@ -64,5 +68,8 @@ $(BUILD_DIR)/client/%.o: client/src/%.c
 
 # Clean
 clean:
-	rm -rf $(BUILD_DIR) $(BIN_DIR)
+	rm -rf $(BUILD_DIR) $(BIN_DIR) $(TEST_DIR)
 	@echo "Cleaned build and bin directories."
+	
+clean-test: 
+	rm -rf $(TEST_DIR)
