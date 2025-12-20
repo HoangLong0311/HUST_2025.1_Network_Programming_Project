@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
     int port = atoi(argv[1]);
 
     // 1. Load accounts and sample data 
-    load_accounts();
+    // load_accounts();
     init_sample_data();
     // 2. Create socket
     if ((server_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
