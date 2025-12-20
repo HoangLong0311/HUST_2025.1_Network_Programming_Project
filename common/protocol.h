@@ -66,7 +66,11 @@
 #define STATUS_ERR_PEER_NOT_FOUND 16
 #define STATUS_ERR_FILE_ALREADY_SHARED 17
 
-# pragma pack(push, 1)
+// Client's info  
+typedef struct client_info_t {
+    int sock;             
+    char ip[16];        
+} client_info_t;
 
 # pragma pack(push, 1)
 
@@ -114,12 +118,6 @@ typedef struct logout_res_t{
 } logout_res_t;
 
 // 2. Peer
-
-// Client's info  
-typedef struct client_info_t {
-    int sock;             
-    char ip[16];        
-} client_info_t;
 
 typedef struct peer_info_t {
     uint32_t client_id;
