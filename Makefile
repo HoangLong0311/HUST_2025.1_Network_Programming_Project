@@ -5,12 +5,6 @@ COMMON_CFLAGS = -g -Wall -Wextra -pthread -Icommon
 SERVER_CFLAGS = $(COMMON_CFLAGS) -Iserver/include
 CLIENT_CFLAGS = $(COMMON_CFLAGS) -Iclient/include
 
-<<<<<<< HEAD
-# Define Directory
-BUILD_DIR = build
-BIN_DIR = bin
-TEST_DIR = test
-=======
 PORT ?= 8080
 IP ?= 127.0.0.1
 
@@ -18,7 +12,6 @@ IP ?= 127.0.0.1
 BUILD_DIR = build
 BIN_DIR   = bin
 TEST_DIR  = test
->>>>>>> refactor/common
 
 COMMON_SRCS = $(wildcard common/*.c)
 SERVER_SRCS = $(wildcard server/src/*.c)
@@ -39,16 +32,7 @@ all: build
 
 build: $(SERVER_EXEC) $(CLIENT_EXEC)
 
-<<<<<<< HEAD
-test: 
-	@mkdir -p $(TEST_DIR)/client1
-	@cp $(CLIENT_EXEC) $(TEST_DIR)/client1/
-	@mkdir -p $(TEST_DIR)/client2
-	@cp $(CLIENT_EXEC) $(TEST_DIR)/client2/
-## Link server app
-=======
 # Link server app
->>>>>>> refactor/common
 $(SERVER_EXEC): $(SERVER_OBJS) $(COMMON_OBJS)
 	@mkdir -p $(BIN_DIR)
 	$(CC) $(SERVER_CFLAGS) -o $@ $^
@@ -94,15 +78,8 @@ run-client: setup-test
 # 6. Clean 
 clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR) $(TEST_DIR)
-<<<<<<< HEAD
-	@echo "Cleaned build and bin directories."
-	
-clean-test: 
-	rm -rf $(TEST_DIR)
-=======
 	@echo "All build and test files removed."
 
 clean-test: 
 	rm -rf $(TEST_DIR)
 	@echo "Test directories removed."
->>>>>>> refactor/common
