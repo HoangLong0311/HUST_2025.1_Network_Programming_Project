@@ -71,7 +71,7 @@ int main(int argc, char *argv[]){
         int client_port = ntohs(client_addr.sin_port);
         printf("New connection from %s:%d\n", client_info->ip, client_port);
         
-        pthread_create(&tid, NULL, &handle_client, (void*)client_info);
+        pthread_create(&tid, NULL, handle_client, (void*)client_info);
     }
     close(server_sock);
 }
