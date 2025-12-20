@@ -29,4 +29,29 @@ void do_register_peer(int server_sock, uint32_t client_id){
     if (send_message(server_sock, MSG_REGISTER_PEER_REQ, &req, sizeof(req)) < 0){
         perror("send_message() error"); 
     }
+    
+    void *payload = NULL;
+    uint8_t msg_type;
+    int len;
+    while((len = recv_message(server_sock, &msg_type, &payload)) > 0) {
+        if (msg_type == MSG_REGISTER_PEER_RES) {
+            register_peer_res_t *res = (struct register_peer_res_t *) payload;
+            switch (res->status) {
+            case STATUS_SUCCESS:
+                // start_server
+                printf("Peer registered successfully. Your server is now listening on port %d.\n", p2p_port);
+                break;
+            case STATUS_ERR_PEER_NOT_FOUND:
+                printf("Your client ID %s was not found. Please check config.txt or restart the application.\n", client_id);
+                break;
+            default:
+                printf("Operation failed.\n");
+                break;
+            }
+        }
+    }
+    
+    free(payload);
+    if (payload) payload = NULL;
+
 }

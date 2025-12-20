@@ -17,3 +17,4 @@ config.txt
 # Targes
 bin/
 build/
+test/
