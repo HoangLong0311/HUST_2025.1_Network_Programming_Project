@@ -121,14 +121,13 @@ typedef struct client_info_t {
     char ip[16];        
 } client_info_t;
 
-typedef struct register_peer_req_t {
+typedef struct peer_info_t {
     uint32_t client_id;
     uint16_t p2p_port;
 } peer_info_t;
 
 typedef struct register_peer_res_t{
     uint8_t status; 
-    
 } register_peer_res_t;
 
 // 3. File

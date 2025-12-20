@@ -99,7 +99,7 @@ void *handle_client(void *arg) {
                 handle_logout(sock, (logout_req_t *) payload);
                 break;
             case MSG_REGISTER_PEER_REQ: 
-                handle_register_peer(sock, client_ip, (register_peer_req_t*) payload);
+                handle_register_peer(sock, client_ip, (peer_info_t*) payload);
                 break;
             case MSG_SHARE_FILE_REQ: 
                 handle_share_file(sock, (share_file_req_t *)payload);
