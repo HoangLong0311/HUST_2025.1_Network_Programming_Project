@@ -11,8 +11,8 @@ void handle_register_peer(int sock, char *client_ip, peer_info_t *req){
         case SUCCESS: 
             res.status = STATUS_SUCCESS;
             break;
-        case CLIENT_ID_ALREADY_EXISTS: 
-            res.status = STATUS_ERR_DUPLICATED_PEER;
+        case PEER_NOT_FOUND: 
+            res.status = STATUS_ERR_PEER_NOT_FOUND;
             break;
         default: 
             res.status = STATUS_FAILURE;
