@@ -5,8 +5,9 @@
 void handle_register_peer(int sock, char *client_ip, peer_info_t *req){
     register_peer_res_t res;
     memset(&res, 0, sizeof(res));
-
-    int ret = register_peer(req->client_id, client_ip, req->p2p_port);
+    uint32_t client_id = ntohl(req->client_id);
+    uint16_t p2p_port = ntohs(req->p2p_port);
+    int ret = register_peer(client_id, client_ip, p2p_port);
     switch(ret) {
         case SUCCESS: 
             res.status = STATUS_SUCCESS;
