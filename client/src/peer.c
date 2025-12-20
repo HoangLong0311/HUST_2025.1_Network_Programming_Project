@@ -42,7 +42,7 @@ void do_register_peer(int server_sock, uint32_t client_id){
                 printf("Peer registered successfully. Your server is now listening on port %d.\n", p2p_port);
                 break;
             case STATUS_ERR_PEER_NOT_FOUND:
-                printf("Your client ID %s was not found. Please check config.txt or restart the application.\n", client_id);
+                printf("Your client ID %u was not found. Please check config.txt or restart the application.\n", client_id);
                 break;
             default:
                 printf("Operation failed.\n");
