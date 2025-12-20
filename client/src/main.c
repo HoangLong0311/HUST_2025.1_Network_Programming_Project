@@ -12,7 +12,7 @@
 #include "file.h"
 
 int server_sock; 
-uint32_t client_id;
+uint32_t client_id = 305419896;
 char current_user[MAX_USERNAME_LEN];
 int is_logged_in = 1;
 

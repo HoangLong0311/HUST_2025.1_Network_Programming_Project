@@ -10,6 +10,7 @@
 #include "network_utils.h"
 #include "session.h"
 #include "account.h"
+#include "index.h"
 #include "peer.h"
 #include "file.h"
 #include "auth.h"
@@ -30,8 +31,9 @@ int main(int argc, char *argv[]){
 
     int port = atoi(argv[1]);
 
-    // 1. Load accounts when initialize server
-    load_accounts();
+    // 1. Load accounts and sample data 
+    // load_accounts();
+    init_sample_data();
     // 2. Create socket
     if ((server_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket() error");
