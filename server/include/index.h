@@ -11,11 +11,11 @@
 #define FILE_ALREADY_SHARED -2
 #define CLIENT_ID_ALREADY_EXISTS -3
 
-typedef struct {
+typedef struct FileEntry {
     char file_name[MAX_FILENAME_LEN];
 } FileEntry;
 
-typedef struct {
+typedef struct PeerNode {
     uint32_t client_id;
     char client_ip[MAX_IP_LEN];
     int p2p_port;

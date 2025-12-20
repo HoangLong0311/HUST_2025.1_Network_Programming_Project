@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include "protocol.h"
 
-typedef struct {
+typedef struct Session{
     int conn_sock;                      // connect socket
     char username[MAX_USERNAME_LEN];    // username in session
 } Session;

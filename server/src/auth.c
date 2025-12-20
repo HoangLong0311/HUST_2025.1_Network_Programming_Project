@@ -40,6 +40,7 @@ void handle_login(int sock, login_req_t *req) {
                     res.status = STATUS_SUCCESS;
                 }
             }
+            break;
         case USER_NOT_FOUND:
             res.status = STATUS_ERR_USERNAME_NOTFOUND;
             break;
