@@ -8,9 +8,15 @@ void handle_register(int sock, register_req_t *req) {
     
     int ret = register_account(req->username, req->password);
     switch (ret) {
-        case SUCCESS: res.status = STATUS_SUCCESS;
-        case USERNAME_ALREADY_TAKEN: res.status = STATUS_ERR_USERNAME_ALREADY_TAKEN;
-        default: res.status = STATUS_FAILURE;
+        case SUCCESS: 
+            res.status = STATUS_SUCCESS;
+            break;
+        case USERNAME_ALREADY_TAKEN: 
+            res.status = STATUS_ERR_USERNAME_ALREADY_TAKEN;
+            break;
+        default: 
+            res.status = STATUS_FAILURE;
+            break;
     }
     // Send reply to client
     send_message(sock, MSG_REGISTER_RES, &res, sizeof(res));
@@ -36,10 +42,13 @@ void handle_login(int sock, login_req_t *req) {
             }
         case USER_NOT_FOUND:
             res.status = STATUS_ERR_USERNAME_NOTFOUND;
+            break;
         case BAD_CREDENTIALS:
             res.status = STATUS_ERR_BAD_CREDENTIALS;
+            break;
         default:
             res.status = STATUS_FAILURE;
+            break;
     }
 
     // Send reply to client
