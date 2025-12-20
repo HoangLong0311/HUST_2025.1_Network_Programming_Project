@@ -4,7 +4,7 @@
 #include "menu.h"
 
 void print_main_menu() {
-    clear_screen();
+    
     printf("======================================\n");
     printf("      P2P FILE SHARING SYSTEM\n");
     printf("======================================\n");
@@ -18,7 +18,7 @@ void print_main_menu() {
 }
 
 void print_auth_menu() {
-    clear_screen();
+    
     printf("======================================\n");
     printf("      P2P FILE SHARING SYSTEM\n");
     printf("======================================\n");

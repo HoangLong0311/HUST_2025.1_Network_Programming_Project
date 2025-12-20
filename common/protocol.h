@@ -66,18 +66,14 @@
 #define STATUS_ERR_PEER_NOT_FOUND 16
 #define STATUS_ERR_FILE_ALREADY_SHARED 17
 
-// Client's info  
-typedef struct {
-    int sock;             
-    char ip[16];        
-} client_info_t;
+# pragma pack(push, 1)
 
 # pragma pack(push, 1)
 
 // --- PACKET STRUCTURE ---
 // MESSAGE = [HEADER][PAYLOAD]
 // -- Header struct --
-typedef struct {
+typedef struct header_t{
     uint8_t msg_type;       // Message type
     uint16_t payload_len;   // Payload length in bytes
 } header_t; 
@@ -86,58 +82,65 @@ typedef struct {
 
 // 1. Authentication
 // Register request
-typedef struct {
+typedef struct register_req_t{
     char username[MAX_USERNAME_LEN];
     char password[MAX_PASSWORD_LEN];
 } register_req_t;
 
 // Register response
-typedef struct {
+typedef struct register_res_t{
     uint8_t status;
 } register_res_t;
 
 // Login request
-typedef struct {
+typedef struct login_req_t{
     char username[MAX_USERNAME_LEN];
     char password[MAX_PASSWORD_LEN];
 } login_req_t;
 
 // Login response
-typedef struct {
+typedef struct login_res_t{
     uint8_t status;
 } login_res_t;
 
 // Logout request
-typedef struct {
+typedef struct logout_req_t{
     char username[MAX_USERNAME_LEN];
 } logout_req_t;
 
 // Logout response
-typedef struct {
+typedef struct logout_res_t{
     uint8_t status;
 } logout_res_t;
 
-// 2. File related
+// 2. Peer
 
-typedef struct {
+// Client's info  
+typedef struct client_info_t {
+    int sock;             
+    char ip[16];        
+} client_info_t;
+
+typedef struct register_peer_req_t {
     uint32_t client_id;
     uint16_t p2p_port;
 } peer_info_t;
 
-typedef struct {
+typedef struct register_peer_res_t{
     uint8_t status; 
     
 } register_peer_res_t;
 
-typedef struct {
+// 3. File
+typedef struct share_file_req_t {
     uint32_t client_id;
     char file_name[MAX_FILENAME_LEN];
 } share_file_req_t;
 
-typedef struct {
+typedef struct share_file_res_t{
     uint8_t status; 
 } share_file_res_t;
 
-#pragma pack(pop);
+#pragma pack(pop)
 
 #endif

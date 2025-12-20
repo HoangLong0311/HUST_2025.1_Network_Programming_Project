@@ -1,41 +1,66 @@
 # Compiler configs
-CC = gcc 
-CFLAGS = -g -Wall -Wextra -pthread -Isrc/common
+CC = gcc
+# Flags
 
-# Define variable
-SRC_DIR = src
+COMMON_CFLAGS = -g -Wall -Wextra -pthread -Icommon
+SERVER_CFLAGS = $(COMMON_CFLAGS) -Iserver/include
+CLIENT_CFLAGS = $(COMMON_CFLAGS) -Iclient/include
+
+# Define Directory
 BUILD_DIR = build
 BIN_DIR = bin
 
-COMMON_SRCS = $(wildcard $(SRC_DIR)/common/*.c)
-SERVER_SRCS = $(wildcard $(SRC_DIR)/server/*.c)
-CLIENT_SRCS = $(wildcard $(SRC_DIR)/client/*.c)
+# Define Sources
+COMMON_SRCS = $(wildcard common/*.c)
+SERVER_SRCS = $(wildcard server/src/*.c)
+CLIENT_SRCS = $(wildcard client/src/*.c)
 
-COMMON_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(COMMON_SRCS))
-SERVER_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SERVER_SRCS))
-CLIENT_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(CLIENT_SRCS))
+# Define Objects
+COMMON_OBJS = $(patsubst common/%.c, $(BUILD_DIR)/common/%.o, $(COMMON_SRCS))
+SERVER_OBJS = $(patsubst server/src/%.c, $(BUILD_DIR)/server/%.o, $(SERVER_SRCS))
+CLIENT_OBJS = $(patsubst client/src/%.c, $(BUILD_DIR)/client/%.o, $(CLIENT_SRCS))
 
+# Executables
 SERVER_EXEC = $(BIN_DIR)/server_app
 CLIENT_EXEC = $(BIN_DIR)/client_app
 
-# All
+# Targets
+.PHONY: all clean build
+
 all: build
 
-# Build
 build: $(SERVER_EXEC) $(CLIENT_EXEC)
-## Link server app 
+
+## Link server app
 $(SERVER_EXEC): $(SERVER_OBJS) $(COMMON_OBJS)
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $@ $^
-	@echo "Compiled successfully!"
-## Link client app 
+	@echo "Linking Server..."
+	$(CC) $(SERVER_CFLAGS) -o $@ $^
+	@echo "Server built successfully!"
+
+## Link client app
 $(CLIENT_EXEC): $(CLIENT_OBJS) $(COMMON_OBJS)
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $@ $^
-## Compile .c to .o
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	@echo "Linking Client..."
+	$(CC) $(CLIENT_CFLAGS) -o $@ $^
+	@echo "Client built successfully!"
+
+# Compile Rules
+
+## Rule for Common
+$(BUILD_DIR)/common/%.o: common/%.c
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(COMMON_CFLAGS) -c -o $@ $<
+
+## Rule for Server 
+$(BUILD_DIR)/server/%.o: server/src/%.c
+	@mkdir -p $(@D)
+	$(CC) $(SERVER_CFLAGS) -c -o $@ $<
+
+## Rule for Client 
+$(BUILD_DIR)/client/%.o: client/src/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CLIENT_CFLAGS) -c -o $@ $<
 
 # Clean
 clean:
