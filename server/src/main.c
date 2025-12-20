@@ -15,7 +15,7 @@
 #include "auth.h"
 
 
-void handle_client(void *arg);
+void *handle_client(void *arg);
 
 int main(int argc, char *argv[]){
     int server_sock, client_sock;
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]){
     close(server_sock);
 }
 
-void handle_client(void *arg) {
+void *handle_client(void *arg) {
     client_info_t *client_info = (client_info_t*) arg;
     int sock = client_info->sock;
     char client_ip[MAX_IP_LEN];
