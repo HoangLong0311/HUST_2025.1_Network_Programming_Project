@@ -1,75 +1,108 @@
-# Compiler configs
+# 1. CONFIGS
 CC = gcc
-# Flags
 
 COMMON_CFLAGS = -g -Wall -Wextra -pthread -Icommon
 SERVER_CFLAGS = $(COMMON_CFLAGS) -Iserver/include
 CLIENT_CFLAGS = $(COMMON_CFLAGS) -Iclient/include
 
+<<<<<<< HEAD
 # Define Directory
 BUILD_DIR = build
 BIN_DIR = bin
 TEST_DIR = test
+=======
+PORT ?= 8080
+IP ?= 127.0.0.1
 
-# Define Sources
+# 2. Variables
+BUILD_DIR = build
+BIN_DIR   = bin
+TEST_DIR  = test
+>>>>>>> refactor/common
+
 COMMON_SRCS = $(wildcard common/*.c)
 SERVER_SRCS = $(wildcard server/src/*.c)
 CLIENT_SRCS = $(wildcard client/src/*.c)
 
-# Define Objects
 COMMON_OBJS = $(patsubst common/%.c, $(BUILD_DIR)/common/%.o, $(COMMON_SRCS))
 SERVER_OBJS = $(patsubst server/src/%.c, $(BUILD_DIR)/server/%.o, $(SERVER_SRCS))
 CLIENT_OBJS = $(patsubst client/src/%.c, $(BUILD_DIR)/client/%.o, $(CLIENT_SRCS))
 
-# Executables
 SERVER_EXEC = $(BIN_DIR)/server_app
 CLIENT_EXEC = $(BIN_DIR)/client_app
 
-# Targets
-.PHONY: all clean build
+# 3. Main targets
+
+.PHONY: all clean build clean-test setup-test run-server run-client1 run-client2
 
 all: build
 
 build: $(SERVER_EXEC) $(CLIENT_EXEC)
 
+<<<<<<< HEAD
 test: 
 	@mkdir -p $(TEST_DIR)/client1
 	@cp $(CLIENT_EXEC) $(TEST_DIR)/client1/
 	@mkdir -p $(TEST_DIR)/client2
 	@cp $(CLIENT_EXEC) $(TEST_DIR)/client2/
 ## Link server app
+=======
+# Link server app
+>>>>>>> refactor/common
 $(SERVER_EXEC): $(SERVER_OBJS) $(COMMON_OBJS)
 	@mkdir -p $(BIN_DIR)
 	$(CC) $(SERVER_CFLAGS) -o $@ $^
 	@echo "Server built successfully!"
 
-## Link client app
+# Link client app
 $(CLIENT_EXEC): $(CLIENT_OBJS) $(COMMON_OBJS)
 	@mkdir -p $(BIN_DIR)
 	$(CC) $(CLIENT_CFLAGS) -o $@ $^
 	@echo "Client built successfully!"
 
-# Compile Rules
-
-## Rule for Common
+# Rule for Common objects
 $(BUILD_DIR)/common/%.o: common/%.c
 	@mkdir -p $(@D)
 	$(CC) $(COMMON_CFLAGS) -c -o $@ $<
 
-## Rule for Server 
+# Rule for Server objects
 $(BUILD_DIR)/server/%.o: server/src/%.c
 	@mkdir -p $(@D)
 	$(CC) $(SERVER_CFLAGS) -c -o $@ $<
 
-## Rule for Client 
+# Rule for Client objects
 $(BUILD_DIR)/client/%.o: client/src/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CLIENT_CFLAGS) -c -o $@ $<
 
-# Clean
+# 4. Setup test environment
+
+setup-test: build
+	@mkdir -p $(TEST_DIR)/client1
+	@cp $(CLIENT_EXEC) $(TEST_DIR)/client1/
+	@mkdir -p $(TEST_DIR)/client2
+	@cp $(CLIENT_EXEC) $(TEST_DIR)/client2/
+	@echo "Test environment setup complete."
+
+# 5. Run commands
+run-server: build
+	./$(SERVER_EXEC) $(PORT)
+
+run-client: setup-test
+	cd $(TEST_DIR)/client1 && ./client_app $(IP) $(PORT)
+
+# 6. Clean 
 clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR) $(TEST_DIR)
+<<<<<<< HEAD
 	@echo "Cleaned build and bin directories."
 	
 clean-test: 
 	rm -rf $(TEST_DIR)
+=======
+	@echo "All build and test files removed."
+
+clean-test: 
+	rm -rf $(TEST_DIR)
+	@echo "Test directories removed."
+>>>>>>> refactor/common
