@@ -46,7 +46,7 @@ void do_share_file(int server_sock, uint32_t client_id){
                     return;
                 }
 
-                fprintf(f_index, "%s %s\n", file_name, file_path);
+                fprintf(f_index, "%d %s %s\n", 1, file_name, file_path);
                 fclose(f_index);
                 break;
             case STATUS_ERR_PEER_NOT_FOUND:
