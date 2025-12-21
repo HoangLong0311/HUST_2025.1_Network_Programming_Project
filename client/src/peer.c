@@ -49,6 +49,9 @@ void do_register_peer(int server_sock, uint32_t client_id){
                 break;
             }
         }
+        free(payload);
+        if (payload) payload = NULL;
+        return;
     }
     
     free(payload);
