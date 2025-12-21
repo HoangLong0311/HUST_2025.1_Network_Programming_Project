@@ -106,6 +106,12 @@ void *handle_client(void *arg) {
             case MSG_SHARE_FILE_REQ: 
                 handle_share_file(sock, (file_entry_t *)payload);
                 break;
+            case MSG_UNSHARE_FILE_REQ: 
+                handle_unshare_file(sock, (file_entry_t *)payload);
+                break;
+            default: 
+                printf("Unknown request.\n");
+                break;
         }
         // Clean payload
         if (payload) {
