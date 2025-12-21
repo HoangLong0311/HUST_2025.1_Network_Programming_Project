@@ -61,7 +61,7 @@ $(BUILD_DIR)/client/%.o: client/src/%.c
 
 # 4. Setup test environment
 
-setup-test: build
+setup-test: clean-test build
 	@mkdir -p $(TEST_DIR)/client1
 	@cp $(CLIENT_EXEC) $(TEST_DIR)/client1/
 	@mkdir $(TEST_DIR)/client1/shared
