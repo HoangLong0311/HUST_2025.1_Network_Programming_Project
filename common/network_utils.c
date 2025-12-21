@@ -46,19 +46,19 @@ int recv_all(int sockfd, void *data, size_t len) {
 
 int send_message(int sockfd, uint8_t msg_type, void *payload, uint16_t payload_len) {
     header_t header;
-
     header.msg_type = msg_type;
     header.payload_len = payload_len;
 
-    // send header
-    if (send_all(sockfd, &header, sizeof(header_t)) == -1) {
-        return -1;
+    size_t total_len = sizeof(header_t) + payload_len;
+    uint8_t* buffer = malloc(total_len);
+    memcpy(buffer, &header, sizeof(header_t));
+    if (payload_len > 0) {
+        memcpy(buffer + sizeof(header_t), payload, payload_len);
     }
-    // send payload
-    if (payload_len > 0 && payload != NULL) {
-        if (send_all(sockfd, payload, payload_len) == -1) {
-            return -1;
-        }
+
+    // send all
+    if (send_all(sockfd, buffer, total_len) < 0) {
+        return -1;
     }
     return 0;
 }
