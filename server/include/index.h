@@ -10,6 +10,7 @@
 #define PEER_NOT_FOUND -1
 #define FILE_ALREADY_SHARED -2
 #define CLIENT_ID_ALREADY_EXISTS -3
+#define FILE_NOT_FOUND -4
 
 typedef struct FileEntry {
     char file_name[MAX_FILENAME_LEN];

@@ -80,3 +80,22 @@ void init_sample_data() {
     printf("Test node initialized: Client ID %u is listening on %s:%d\n", 
             head->client_id, head->client_ip, head->p2p_port);
 }
+
+int remove_file(uint32_t client_id, char* file_name){
+    // find peer
+    PeerNode *peer;
+    if ((peer = find_peer_by_id(client_id)) == NULL) {
+        return PEER_NOT_FOUND;
+    }
+    
+    for (int i = 0; i < peer->file_count; ++i) {
+        if (strcmp(peer->files[i].file_name, file_name) == 0) {
+            if (i != peer->file_count - 1) {
+                peer->files[i] = peer->files[peer->file_count - 1];
+            }
+            peer->file_count--;
+            return SUCCESS;
+        }
+    }
+    return FILE_NOT_FOUND;
+}
