@@ -61,9 +61,18 @@ int main(int argc, char *argv[]) {
             print_main_menu();
             option = get_choice();
             switch (option) {
-                case 1: do_register_peer(server_sock, client_id); break;
-                case 2: do_share_file(server_sock, client_id); break;
-                case 3: do_unshare_file(server_sock, client_id); break;
+                case 1: 
+                    do_register_peer(server_sock, client_id); 
+                    pause_screen();
+                    break;
+                case 2: 
+                    do_share_file(server_sock, client_id); 
+                    pause_screen();
+                    break;
+                case 3: 
+                    do_unshare_file(server_sock, client_id); 
+                    pause_screen();
+                    break;
             }
         }
     }

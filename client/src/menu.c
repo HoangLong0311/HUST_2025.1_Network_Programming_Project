@@ -4,7 +4,7 @@
 #include "menu.h"
 
 void print_main_menu() {
-    
+    clear_screen();
     printf("======================================\n");
     printf("      P2P FILE SHARING SYSTEM\n");
     printf("======================================\n");
@@ -26,6 +26,18 @@ void print_auth_menu() {
     printf(" [2] Login\n");
     printf(" [0] Exit Application\n");
     printf("======================================\n");
+}
+
+void pause_screen(){
+    printf("\nPress Enter to continue...");
+    fflush(stdout);
+    
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+void clear_screen(){
+    system("clear");
 }
 
 int get_choice(){
