@@ -45,6 +45,10 @@ int main(int argc, char *argv[]){
     server_addr.sin_port = htons(port); 
     server_addr.sin_addr.s_addr = INADDR_ANY;
 
+    int opt = 1;
+    setsockopt(server_sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
+
     // 3. Bind 
     if (bind(server_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0){
         perror("bind() error");
