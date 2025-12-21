@@ -138,9 +138,10 @@ typedef struct share_file_res_t{
     uint8_t status; 
 } share_file_res_t;
 
-typedef struct share_file_res_t{
+typedef struct unshare_file_res_t{
     uint8_t status; 
-} share_file_res_t;
+} unshare_file_res_t;
+
 #pragma pack(pop)
 
 #endif

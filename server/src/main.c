@@ -104,7 +104,7 @@ void *handle_client(void *arg) {
                 handle_register_peer(sock, client_ip, (peer_info_t*) payload);
                 break;
             case MSG_SHARE_FILE_REQ: 
-                handle_share_file(sock, (share_file_req_t *)payload);
+                handle_share_file(sock, (file_entry_t *)payload);
                 break;
         }
         // Clean payload

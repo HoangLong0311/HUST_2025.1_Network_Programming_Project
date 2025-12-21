@@ -3,6 +3,6 @@
 
 #include "protocol.h"
 
-void handle_share_file(int sock, share_file_req_t *req);
+void handle_share_file(int sock, file_entry_t *req);
 
 #endif 

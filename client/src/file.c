@@ -18,7 +18,7 @@ void do_share_file(int server_sock, uint32_t client_id){
     strcpy(file_name, basename(file_path));
     
     // Create request
-    share_file_req_t req; 
+    file_entry_t req; 
     memset(&req, 0, sizeof(req));
 
     req.client_id = htonl(client_id);

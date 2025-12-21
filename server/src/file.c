@@ -2,7 +2,7 @@
 #include "index.h"
 #include "network_utils.h"
 
-void handle_share_file(int sock, share_file_req_t *req){
+void handle_share_file(int sock, file_entry_t *req){
     share_file_res_t res;
     memset(&res, 0, sizeof(res));
     uint32_t client_id = ntohl(req->client_id);
