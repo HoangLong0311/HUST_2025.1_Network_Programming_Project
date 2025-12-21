@@ -65,7 +65,7 @@
 #define STATUS_ERR_DUPLICATED_PEER 15
 #define STATUS_ERR_PEER_NOT_FOUND 16
 #define STATUS_ERR_FILE_ALREADY_SHARED 17
-
+#define STATUS_ERR_FILE_NOT_FOUND 18
 // Client's info  
 typedef struct client_info_t {
     int sock;             
@@ -129,15 +129,18 @@ typedef struct register_peer_res_t{
 } register_peer_res_t;
 
 // 3. File
-typedef struct share_file_req_t {
+typedef struct file_entry_t {
     uint32_t client_id;
     char file_name[MAX_FILENAME_LEN];
-} share_file_req_t;
+} file_entry_t;
 
 typedef struct share_file_res_t{
     uint8_t status; 
 } share_file_res_t;
 
+typedef struct share_file_res_t{
+    uint8_t status; 
+} share_file_res_t;
 #pragma pack(pop)
 
 #endif
