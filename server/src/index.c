@@ -43,6 +43,8 @@ int add_file(uint32_t client_id, char *file_name){
     // check duplicated
     for (int i = 0; i < peer->file_count; ++i) {
         if (strcmp(peer->files[i].file_name, file_name) == 0) {
+            printf("[DEBUG] already_shared_file_name: %s", peer->files[i].file_name);
+            printf("[DEBUG] file_name: %s", file_name);
             return FILE_ALREADY_SHARED;
         }
     }
