@@ -33,4 +33,6 @@ int register_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port);
 
 void init_sample_data();
 
+int remove_file(uint32_t client_id, char* file_name);
+
 #endif

@@ -63,6 +63,7 @@ int main(int argc, char *argv[]) {
             switch (option) {
                 case 1: do_register_peer(server_sock, client_id); break;
                 case 2: do_share_file(server_sock, client_id); break;
+                case 3: do_unshare_file(server_sock, client_id); break;
             }
         }
     }
