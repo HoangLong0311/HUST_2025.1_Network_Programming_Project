@@ -13,3 +13,8 @@ config.txt
 
 # Vscode 
 .vscode/
+
+# Targes
+bin/
+build/
+test/

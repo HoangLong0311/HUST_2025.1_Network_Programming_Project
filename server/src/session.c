@@ -20,7 +20,7 @@ int add_session(int sock, char* username){
     int idx = -1; 
     for (int i = 0; i < MAX_CLIENTS; ++i){
         if (sessions[i].conn_sock == -1){
-            sessions[i].conn_sock == sock;
+            sessions[i].conn_sock = sock;
             strcpy(sessions[i].username, username);
             idx = i;
             break;

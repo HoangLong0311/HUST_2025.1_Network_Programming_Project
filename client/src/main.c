@@ -3,17 +3,19 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/socket.h>
-#include <arpa/inet.h>
 
 #include "protocol.h"
 #include "network_utils.h"
+#include "menu.h"
+#include "auth.h"
+#include "peer.h"
+#include "file.h"
 
-int client_sock; 
+int server_sock; 
+uint32_t client_id = 305419896;
 char current_user[MAX_USERNAME_LEN];
-int is_logged_in = 0;
+int is_logged_in = 1;
 
-void do_register();
-void do_login();
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
@@ -26,7 +28,7 @@ int main(int argc, char *argv[]) {
 
     struct sockaddr_in server_addr;
 
-    if ((client_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((server_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket() error");
         exit(EXIT_FAILURE);
     }
@@ -40,7 +42,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    if (connect(client_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
+    if (connect(server_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
         perror("connect() error");
         exit(EXIT_FAILURE);
     }
@@ -50,21 +52,35 @@ int main(int argc, char *argv[]) {
     while (1) {
         if (!is_logged_in) {
             print_auth_menu();
-            option = getOption();
+            option = get_choice();
             switch (option) {
                 case 1: do_register(); break;
                 case 2: do_login(); break;
             }
         } else {
             print_main_menu();
-            option = getOption();
+            option = get_choice();
+            switch (option) {
+                case 1: 
+                    do_register_peer(server_sock, client_id); 
+                    pause_screen();
+                    break;
+                case 2: 
+                    do_share_file(server_sock, client_id); 
+                    pause_screen();
+                    break;
+                case 3: 
+                    do_unshare_file(server_sock, client_id); 
+                    pause_screen();
+                    break;
+            }
         }
     }
-
-    close(client_sock);
+    close(server_sock);
     return 0;
 }
 
+<<<<<<< HEAD:src/client/client.c
 void do_register(){
 
 }
@@ -125,3 +141,5 @@ void do_login(){
     }
 }
 
+=======
+>>>>>>> be0d1a8603d2c43425fe3ca19778fc942fde061a:client/src/main.c

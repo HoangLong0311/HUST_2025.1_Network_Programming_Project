@@ -1,43 +1,87 @@
-# Compiler configs
-CC = gcc 
-CFLAGS = -g -Wall -Wextra -pthread -Isrc/common
+# 1. CONFIGS
+CC = gcc
 
-# Define variable
-SRC_DIR = src
+COMMON_CFLAGS = -g -Wall -Wextra -pthread -Icommon
+SERVER_CFLAGS = $(COMMON_CFLAGS) -Iserver/include
+CLIENT_CFLAGS = $(COMMON_CFLAGS) -Iclient/include
+
+PORT ?= 8080
+IP ?= 127.0.0.1
+
+# 2. Variables
 BUILD_DIR = build
-BIN_DIR = bin
+BIN_DIR   = bin
+TEST_DIR  = test
 
-COMMON_SRCS = $(wildcard $(SRC_DIR)/common/*.c)
-SERVER_SRCS = $(wildcard $(SRC_DIR)/server/*.c)
-CLIENT_SRCS = $(wildcard $(SRC_DIR)/client/*.c)
+COMMON_SRCS = $(wildcard common/*.c)
+SERVER_SRCS = $(wildcard server/src/*.c)
+CLIENT_SRCS = $(wildcard client/src/*.c)
 
-COMMON_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(COMMON_SRCS))
-SERVER_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SERVER_SRCS))
-CLIENT_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(CLIENT_SRCS))
+COMMON_OBJS = $(patsubst common/%.c, $(BUILD_DIR)/common/%.o, $(COMMON_SRCS))
+SERVER_OBJS = $(patsubst server/src/%.c, $(BUILD_DIR)/server/%.o, $(SERVER_SRCS))
+CLIENT_OBJS = $(patsubst client/src/%.c, $(BUILD_DIR)/client/%.o, $(CLIENT_SRCS))
 
 SERVER_EXEC = $(BIN_DIR)/server_app
 CLIENT_EXEC = $(BIN_DIR)/client_app
 
-# All
+# 3. Main targets
+
+.PHONY: all clean build clean-test setup-test run-server run-client1 run-client2
+
 all: build
 
-# Build
 build: $(SERVER_EXEC) $(CLIENT_EXEC)
-## Link server app 
+
+# Link server app
 $(SERVER_EXEC): $(SERVER_OBJS) $(COMMON_OBJS)
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $@ $^
-	@echo "Compiled successfully!"
-## Link client app 
+	$(CC) $(SERVER_CFLAGS) -o $@ $^
+	@echo "Server built successfully!"
+
+# Link client app
 $(CLIENT_EXEC): $(CLIENT_OBJS) $(COMMON_OBJS)
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $@ $^
-## Compile .c to .o
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CLIENT_CFLAGS) -o $@ $^
+	@echo "Client built successfully!"
 
-# Clean
+# Rule for Common objects
+$(BUILD_DIR)/common/%.o: common/%.c
+	@mkdir -p $(@D)
+	$(CC) $(COMMON_CFLAGS) -c -o $@ $<
+
+# Rule for Server objects
+$(BUILD_DIR)/server/%.o: server/src/%.c
+	@mkdir -p $(@D)
+	$(CC) $(SERVER_CFLAGS) -c -o $@ $<
+
+# Rule for Client objects
+$(BUILD_DIR)/client/%.o: client/src/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CLIENT_CFLAGS) -c -o $@ $<
+
+# 4. Setup test environment
+
+setup-test: clean-test build
+	@mkdir -p $(TEST_DIR)/client1
+	@cp $(CLIENT_EXEC) $(TEST_DIR)/client1/
+	@mkdir $(TEST_DIR)/client1/shared
+	@echo "Hello" > $(TEST_DIR)/client1/shared/test.txt
+	@mkdir -p $(TEST_DIR)/client2
+	@cp $(CLIENT_EXEC) $(TEST_DIR)/client2/
+	@echo "Test environment setup complete." 
+
+# 5. Run commands
+run-server: build
+	./$(SERVER_EXEC) $(PORT)
+
+run-client: setup-test
+	cd $(TEST_DIR)/client1 && ./client_app $(IP) $(PORT)
+
+# 6. Clean 
 clean:
-	rm -rf $(BUILD_DIR) $(BIN_DIR)
-	@echo "Cleaned build and bin directories."
+	rm -rf $(BUILD_DIR) $(BIN_DIR) $(TEST_DIR)
+	@echo "All build and test files removed."
+
+clean-test: 
+	rm -rf $(TEST_DIR)
+	@echo "Test directories removed."

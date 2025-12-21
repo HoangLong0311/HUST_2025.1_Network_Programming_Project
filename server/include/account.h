@@ -12,7 +12,7 @@
 #define DATABASE_FULL -4
 
 
-typedef struct {
+typedef struct Account{
     char username[MAX_USERNAME_LEN];
     char password[MAX_PASSWORD_LEN];
 } Account;
