@@ -66,9 +66,10 @@ setup-test: clean-test build
 	@cp $(CLIENT_EXEC) $(TEST_DIR)/client1/
 	@mkdir $(TEST_DIR)/client1/shared
 	@echo "Hello" > $(TEST_DIR)/client1/shared/test.txt
+	@echo "Hello" > $(TEST_DIR)/client1/shared/hello.txt
 	@mkdir -p $(TEST_DIR)/client2
 	@cp $(CLIENT_EXEC) $(TEST_DIR)/client2/
-	@echo "Test environment setup complete." 
+	@echo "Test environment setup completed." 
 
 # 5. Run commands
 run-server: build

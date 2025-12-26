@@ -101,3 +101,7 @@ int remove_file(uint32_t client_id, char* file_name){
     }
     return FILE_NOT_FOUND;
 }
+
+int search_file(uint32_t client_id, char* file_name){
+    
+}
