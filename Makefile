@@ -1,4 +1,4 @@
-# 1. CONFIGS
+# 1. Configs
 CC = gcc
 
 COMMON_CFLAGS = -g -Wall -Wextra -pthread -Icommon
