@@ -25,14 +25,28 @@ typedef struct PeerNode {
     struct PeerNode *next;
 } PeerNode;
 
-int init_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port);
+typedef struct PeerContact {
+    char client_ip[MAX_IP_LEN];
+    int p2p_port;
+    struct PeerContact *next;
+} PeerContact;
+
+typedef struct SearchResult {
+    int contact_count; 
+    PeerContact *contacts_head;
+} SearchResult;
+
+int init_peer(uint32_t client_id, char *client_ip, uint16_t p2p_port);
 
 int add_file(uint32_t client_id, char *file_name);
 
-int register_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port);
+int register_peer(uint32_t client_id, char *client_ip, uint16_t p2p_port);
 
 void init_sample_data();
 
-int remove_file(uint32_t client_id, char* file_name);
+int remove_file(uint32_t client_id, char *file_name);
 
+void search_file(SearchResult *result, char *file_name);
+
+void free_search_result(SearchResult *result);
 #endif

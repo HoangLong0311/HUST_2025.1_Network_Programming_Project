@@ -27,6 +27,7 @@ void do_share_file(int server_sock, uint32_t client_id){
     // Send 
     if (send_message(server_sock, MSG_SHARE_FILE_REQ, &req, sizeof(req)) < 0) {
         perror("send_message() error"); 
+        return;
     } 
 
     // Receive message
@@ -84,6 +85,7 @@ void do_unshare_file(int server_sock, uint32_t client_id){
     // Send 
     if (send_message(server_sock, MSG_UNSHARE_FILE_REQ, &req, sizeof(req)) < 0) {
         perror("send_message() error"); 
+        return;
     }
 
     // Receive response
@@ -138,5 +140,64 @@ void do_unshare_file(int server_sock, uint32_t client_id){
     }
     free(payload);
     if (payload) payload = NULL;
+}
 
+void do_search_file(int server_sock, uint32_t client_id){
+    char file_name[MAX_FILENAME_LEN];
+
+    printf("\n--- SEARCH A FILE ---\n");
+    get_input("Enter filename to search: ", file_name, sizeof(file_name));
+
+    // create request
+    search_file_req_t req;
+    memset(&req, 0, sizeof(search_file_req_t));
+    strcpy(req.file_name, file_name);
+    // send
+    if (send_message(server_sock, MSG_SEARCH_FILE_REQ, &req, sizeof(req)) < 0) {
+        perror(" send_message() error");
+        return;
+    }
+
+    // Receive
+
+    void *payload = NULL; 
+    uint8_t msg_type; 
+    int len; 
+
+    while((len = recv_message(server_sock, &msg_type, &payload)) > 0) {
+        if (msg_type == MSG_SEARCH_FILE_RES) {
+            // extract metadata
+            search_file_metadata_t *metadata = (search_file_metadata_t*) payload;
+            // extract count
+            uint8_t contact_count = ntohs(metadata->contact_count);
+
+            if (contact_count == 0) {
+                printf("No peers found containing file '%s'.\n", file_name);
+            } else {
+                printf("\n!!! Found %d peer(s) having file '%s':\n", contact_count, file_name);
+                printf("%-5s %-20s %-10s\n", "No.", "IP Address", "Port");
+                printf("----------------------------------------\n");
+
+                contact_t *contacts = (contact_t *)((uint8_t *)payload + sizeof(search_file_metadata_t));
+
+                // Traversal and display
+                for (int i = 0; i < contact_count; i++) {
+                    uint16_t peer_port = ntohs(contacts[i].p2p_port);
+                    printf("%-5d %-20s %-10d\n", 
+                           i + 1, 
+                           contacts[i].client_ip, 
+                           peer_port);
+                }
+                printf("----------------------------------------\n");
+            }
+
+            // Clean
+            free(payload);
+            if (payload) payload = NULL;
+            return;
+        } 
+    }
+
+    free(payload); 
+    if (payload) payload = NULL;
 }

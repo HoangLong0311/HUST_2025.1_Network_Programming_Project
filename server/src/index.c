@@ -16,7 +16,7 @@ static PeerNode* find_peer_by_id(uint32_t client_id){
     return NULL;
 }
 
-int init_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port){
+int init_peer(uint32_t client_id, char *client_ip, uint16_t p2p_port){
     // find duplicated
     PeerNode *peer;
     if ((peer = find_peer_by_id(client_id)) != NULL) {
@@ -56,8 +56,7 @@ int add_file(uint32_t client_id, char *file_name){
     return SUCCESS;
 }
 
-
-int register_peer(uint32_t client_id, char* client_ip, uint16_t p2p_port){
+int register_peer(uint32_t client_id, char *client_ip, uint16_t p2p_port){
     // find duplicated
     PeerNode *peer;
     if ((peer = find_peer_by_id(client_id)) == NULL) {
@@ -83,7 +82,7 @@ void init_sample_data() {
             head->client_id, head->client_ip, head->p2p_port);
 }
 
-int remove_file(uint32_t client_id, char* file_name){
+int remove_file(uint32_t client_id, char *file_name){
     // find peer
     PeerNode *peer;
     if ((peer = find_peer_by_id(client_id)) == NULL) {
@@ -102,6 +101,39 @@ int remove_file(uint32_t client_id, char* file_name){
     return FILE_NOT_FOUND;
 }
 
-int search_file(uint32_t client_id, char* file_name){
+void search_file(SearchResult *result, char *file_name){
+    PeerNode *current = head;
+    while(current != NULL) {
+        for(int i = 0; i < current->file_count; ++i) {
+            if (strcmp(current->files[i].file_name, file_name) == 0){
+                PeerContact *new_contact = (PeerContact *) malloc(sizeof(PeerContact)); 
+                if (new_contact == NULL) break;
+
+                strcpy(new_contact->client_ip, current->client_ip);
+                new_contact->p2p_port = current->p2p_port;
+
+                new_contact->next = result->contacts_head;
+                result->contacts_head = new_contact;
+                result->contact_count ++;
+                break;
+            }
+        }
+        current = current->next;
+    }
+    return result;
+}
+
+void free_search_result(SearchResult *result){
+    if (result == NULL) return;
+
+    PeerContact *current = result->contacts_head;
+    PeerContact *temp;
     
+    while (current != NULL) {
+        temp = current;
+        current = current->next;
+        free(temp);
+    }
+
+    free(result);
 }

@@ -142,6 +142,19 @@ typedef struct unshare_file_res_t{
     uint8_t status; 
 } unshare_file_res_t;
 
+typedef struct search_file_req_t{
+    char file_name[MAX_FILENAME_LEN];
+} search_file_req_t;
+
+typedef struct contact_t{
+    char client_ip[MAX_IP_LEN];
+    uint16_t p2p_port;
+} contact_t;
+
+typedef struct search_file_metadata_t{
+    uint16_t contact_count; 
+} search_file_metadata_t;
+
 #pragma pack(pop)
 
 #endif

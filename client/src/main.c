@@ -73,6 +73,10 @@ int main(int argc, char *argv[]) {
                     do_unshare_file(server_sock, client_id); 
                     pause_screen();
                     break;
+                case 4: 
+                    do_search_file(server_sock, client_id);
+                    pause_screen();
+                    break;
             }
         }
     }

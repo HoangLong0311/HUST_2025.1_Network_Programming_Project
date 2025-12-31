@@ -113,6 +113,9 @@ void *handle_client(void *arg) {
             case MSG_UNSHARE_FILE_REQ: 
                 handle_unshare_file(sock, (file_entry_t *)payload);
                 break;
+            case MSG_SEARCH_FILE_REQ: 
+                handle_search_file(sock, (search_file_req_t *)payload);
+                break;
             default: 
                 printf("Unknown request.\n");
                 break;
