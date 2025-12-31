@@ -190,7 +190,6 @@ void do_search_file(int server_sock, uint32_t client_id){
                 }
                 printf("----------------------------------------\n");
             }
-            
             // Clean
             free(payload);
             if (payload) payload = NULL;
