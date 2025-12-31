@@ -76,9 +76,9 @@ void handle_search_file(int sock, search_file_req_t *req){
     contact_t *contacts = (contact_t *)(payload + sizeof(search_file_metadata_t));
     // step variable
     int i = 0;
-    if (metadata.contact_count > 0){
+    if (result.contact_count > 0){
         PeerContact *current_node = result.contacts_head;
-        while(current_node != NULL){
+        while(current_node != NULL && i < result.contact_count){
             // create contact from node data
             strcpy(contacts[i].client_ip, current_node->client_ip);
             contacts[i].p2p_port = htons(current_node->p2p_port);

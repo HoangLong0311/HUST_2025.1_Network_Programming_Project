@@ -174,7 +174,7 @@ void do_search_file(int server_sock, uint32_t client_id){
             if (contact_count == 0) {
                 printf("No peers found containing file '%s'.\n", file_name);
             } else {
-                printf("\n!!! Found %d peer(s) having file '%s':\n", contact_count, file_name);
+                printf("\n!!! Found %d peer(s) having file '%s':\n\n", contact_count, file_name);
                 printf("%-5s %-20s %-10s\n", "No.", "IP Address", "Port");
                 printf("----------------------------------------\n");
 

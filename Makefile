@@ -7,6 +7,9 @@ CLIENT_CFLAGS = $(COMMON_CFLAGS) -Iclient/include
 
 PORT ?= 8080
 IP ?= 127.0.0.1
+P2P_PORT1 = 20001
+P2P_PORT2 = 20002
+P2P_PORT3 = 20003
 
 # 2. Variables
 BUILD_DIR = build
@@ -25,8 +28,6 @@ SERVER_EXEC = $(BIN_DIR)/server_app
 CLIENT_EXEC = $(BIN_DIR)/client_app
 
 # 3. Main targets
-
-.PHONY: all clean build clean-test setup-test run-server run-client1 run-client2
 
 all: build
 
@@ -61,28 +62,41 @@ $(BUILD_DIR)/client/%.o: client/src/%.c
 
 # 4. Setup test environment
 
-setup-test: clean-test build
+setup-client1: clean-client1 build
 	@mkdir -p $(TEST_DIR)/client1
 	@cp $(CLIENT_EXEC) $(TEST_DIR)/client1/
 	@mkdir $(TEST_DIR)/client1/shared
-	@echo "Hello" > $(TEST_DIR)/client1/shared/test.txt
-	@echo "Hello" > $(TEST_DIR)/client1/shared/hello.txt
+	@echo "Hello from client 1" > $(TEST_DIR)/client1/shared/hello.txt
+	@echo "Bye from client 1" > $(TEST_DIR)/client1/shared/bye.txt
+
+setup-client2: clean-client2 build
 	@mkdir -p $(TEST_DIR)/client2
 	@cp $(CLIENT_EXEC) $(TEST_DIR)/client2/
+	@mkdir $(TEST_DIR)/client2/shared
+	@echo "Hello from client 2" > $(TEST_DIR)/client2/shared/hello.txt
+	@echo "Only contained in client 2" > $(TEST_DIR)/client2/shared/unique.txt
+	@echo "Bye from client 2" > $(TEST_DIR)/client2/shared/bye.txt
+	
+setup-client3: clean-client3 build
+	@mkdir -p $(TEST_DIR)/client3
+	@cp $(CLIENT_EXEC) $(TEST_DIR)/client3/
+	@mkdir -p $(TEST_DIR)/client3/downloads
 	@echo "Test environment setup completed." 
 
 # 5. Run commands
 run-server: build
 	./$(SERVER_EXEC) $(PORT)
 
-run-client: setup-test
-	cd $(TEST_DIR)/client1 && ./client_app $(IP) $(PORT)
+run-client%: setup-client%
+	cd $(TEST_DIR)/client$* && ./client_app $(IP) $(PORT) $(P2P_PORT$*)
 
 # 6. Clean 
 clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR) $(TEST_DIR)
 	@echo "All build and test files removed."
-
 clean-test: 
-	rm -rf $(TEST_DIR)
-	@echo "Test directories removed."
+	rm -rf  $(TEST_DIR)
+	@echo "Test environment removed"
+clean-client%: 
+	rm -rf $(TEST_DIR)/client$*
+

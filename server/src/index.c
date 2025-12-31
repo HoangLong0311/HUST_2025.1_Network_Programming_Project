@@ -24,7 +24,8 @@ int init_peer(uint32_t client_id, char *client_ip, uint16_t p2p_port){
     }
     // create new peer
     PeerNode *newPeer = (PeerNode *) malloc(sizeof(PeerNode));
-    memset(&newPeer, 0, sizeof(newPeer));
+    memset(newPeer, 0, sizeof(PeerNode));
+    newPeer->client_id = client_id;
     strcpy(newPeer->client_ip, client_ip);
     newPeer->p2p_port = p2p_port;
     // update head 
@@ -68,20 +69,12 @@ int register_peer(uint32_t client_id, char *client_ip, uint16_t p2p_port){
 }
 
 void init_sample_data() {
-    PeerNode *test_node = malloc(sizeof(PeerNode));
-    memset(test_node, 0, sizeof(PeerNode));
+    init_peer(1001, "127.0.0.1", 20001);
+    init_peer(1002, "127.0.0.1", 20002);
+    init_peer(1003, "127.0.0.1", 20003);
 
-    test_node->client_id = 305419896;
-    strcpy(test_node->client_ip, "127.0.0.1");
-    test_node->p2p_port = 50000;
-    test_node->file_count = 0; 
-    test_node->next = NULL;
-    head = test_node; 
-
-    printf("Test node initialized: Client ID %u is listening on %s:%d\n", 
-            head->client_id, head->client_ip, head->p2p_port);
+    printf("Init sample data... 3 Peers created.\n");
 }
-
 int remove_file(uint32_t client_id, char *file_name){
     // find peer
     PeerNode *peer;
@@ -120,7 +113,6 @@ void search_file(SearchResult *result, char *file_name){
         }
         current = current->next;
     }
-    return result;
 }
 
 void free_search_result(SearchResult *result){
@@ -134,6 +126,4 @@ void free_search_result(SearchResult *result){
         current = current->next;
         free(temp);
     }
-
-    free(result);
 }

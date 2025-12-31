@@ -33,21 +33,23 @@
 #define MSG_LOGOUT_RES                  6
 
 // Client 
-#define MSG_REGISTER_PEER_REQ        7
-#define MSG_REGISTER_PEER_RES        8
+#define MSG_INIT_PEER_REQ               7
+#define MSG_INIT_PEER_RES               8
+#define MSG_REGISTER_PEER_REQ           9
+#define MSG_REGISTER_PEER_RES           10
 
 // File
-#define MSG_SHARE_FILE_REQ              9
-#define MSG_SHARE_FILE_RES              10
-#define MSG_UNSHARE_FILE_REQ            11
-#define MSG_UNSHARE_FILE_RES            12
-#define MSG_SEARCH_FILE_REQ             13
-#define MSG_SEARCH_FILE_RES             14
+#define MSG_SHARE_FILE_REQ              11
+#define MSG_SHARE_FILE_RES              12
+#define MSG_UNSHARE_FILE_REQ            13
+#define MSG_UNSHARE_FILE_RES            14
+#define MSG_SEARCH_FILE_REQ             15
+#define MSG_SEARCH_FILE_RES             16
 // Download
-#define MSG_P2P_DOWNLOAD_REQ            15
-#define MSG_P2P_DOWNLOAD_RES            16
-#define MSG_P2P_FILE_DATA               17
-#define MSG_P2P_ERROR                   18
+#define MSG_P2P_DOWNLOAD_REQ            17
+#define MSG_P2P_DOWNLOAD_RES            18
+#define MSG_P2P_FILE_DATA               19
+#define MSG_P2P_ERROR                   20
 
 // --- STATUS CODES ---
 // Generic codes

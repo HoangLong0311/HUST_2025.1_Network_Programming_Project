@@ -12,20 +12,19 @@
 #include "file.h"
 
 int server_sock; 
-uint32_t client_id = 305419896;
+uint32_t client_id;
 char current_user[MAX_USERNAME_LEN];
 int is_logged_in = 1;
 
-
 int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        fprintf(stderr, "Usage: %s <IP_Addr> <Port_Number>\n", argv[0]);
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s <IP_Addr> <Port_Number> <P2P_Port_Number>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
     char *ip_addr = argv[1];
     int port = atoi(argv[2]);
-
+    int p2p_port = atoi(argv[3]);
     struct sockaddr_in server_addr;
 
     if ((server_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -46,6 +45,8 @@ int main(int argc, char *argv[]) {
         perror("connect() error");
         exit(EXIT_FAILURE);
     }
+    load_client_id(&client_id);
+    do_init_peer(server_sock, client_id, (uint16_t) p2p_port);
 
     int option;
     // Main  loop

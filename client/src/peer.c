@@ -1,12 +1,46 @@
 #include<stdio.h>
 #include<string.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
 #include "network_utils.h"
 #include "menu.h"
 #include "peer.h"
 
-void do_init_peer(){
+void load_client_id(uint32_t *client_id){
+    FILE *f_config = fopen(CONFIG_FILE, "r");
+    if (f_config != NULL){
+        if (fscanf(f_config, "%u", client_id) == 1) {
+            printf("Loaded Client ID: %u\n", *client_id);
+            fclose(f_config);
+            return;
+        }
+        fclose(f_config);
+    }
+    *client_id = generate_client_id();
+}
+
+uint32_t generate_client_id(){
+    srand(time(NULL) ^ getpid());
+    uint32_t client_id = (rand() << 16) | rand();
+    FILE *f_config = fopen(CONFIG_FILE, "w");
+    if (f_config != NULL) {
+        fprintf(f_config, "%u", client_id);
+        fclose(f_config);
+    }
+    return client_id;
+}
+
+void do_init_peer(int server_sock, uint32_t client_id, uint16_t p2p_port){
+    peer_info_t req; 
+    memset(&req, 0, sizeof(req));
+
+    req.client_id = htonl(client_id); 
+    req.p2p_port = htons(p2p_port);
     
+    if (send_message(server_sock, MSG_INIT_PEER_REQ, &req, sizeof(req)) < 0){
+        perror("send_message() error"); 
+    }
 }
 
 void do_register_peer(int server_sock, uint32_t client_id){

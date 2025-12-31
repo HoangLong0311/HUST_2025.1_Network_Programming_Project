@@ -33,7 +33,7 @@ int main(int argc, char *argv[]){
 
     // 1. Load accounts and sample data 
     // load_accounts();
-    init_sample_data();
+    // init_sample_data();
     // 2. Create socket
     if ((server_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket() error");
@@ -104,8 +104,11 @@ void *handle_client(void *arg) {
             case MSG_LOGOUT_REQ:
                 handle_logout(sock, (logout_req_t *) payload);
                 break;
+            case MSG_INIT_PEER_REQ:
+                handle_init_peer(sock, client_ip, (peer_info_t *)payload);
+                break;
             case MSG_REGISTER_PEER_REQ: 
-                handle_register_peer(sock, client_ip, (peer_info_t*) payload);
+                handle_register_peer(sock, client_ip, (peer_info_t *) payload);
                 break;
             case MSG_SHARE_FILE_REQ: 
                 handle_share_file(sock, (file_entry_t *)payload);
