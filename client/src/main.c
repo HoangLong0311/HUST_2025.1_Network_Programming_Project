@@ -46,8 +46,9 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     load_client_id(&client_id);
+    start_p2p_listener((uint16_t) p2p_port);
     do_init_peer(server_sock, client_id, (uint16_t) p2p_port);
-
+    
     int option;
     // Main  loop
     while (1) {
@@ -76,6 +77,10 @@ int main(int argc, char *argv[]) {
                     break;
                 case 4: 
                     do_search_file(server_sock, client_id);
+                    pause_screen();
+                    break;
+                case 5: 
+                    do_download_file(server_sock, client_id);
                     pause_screen();
                     break;
             }

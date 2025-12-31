@@ -98,3 +98,57 @@ int recv_message(int sockfd, uint8_t *msg_type, void **payload) {
 
     return (int) payload_len;
 }
+
+long send_file_data(int sockfd, char *file_path){
+    FILE *fp = fopen(file_path, "rb");
+    if (fp == NULL) {
+        printf("Cannot open file");
+        return -1;
+    }
+    char buffer[CHUNK_SIZE];
+    size_t bytes_read;
+    long total_bytes_sent = 0;
+
+    while((bytes_read = fread(buffer, 1, sizeof(buffer), fp)) > 0) {
+        if (send_all(sockfd, buffer, bytes_read) < 0){
+            fclose(fp);
+            return -1;
+        }
+        total_bytes_sent += bytes_read;
+    }
+    fclose(fp);
+    return total_bytes_sent;
+}
+
+int recv_file_data(int sockfd, long file_size, char *file_name) {
+    char save_path[MAX_FILEPATH_LEN];
+    snprintf(save_path, sizeof(save_path), "%s/%s", DOWNLOAD_FOLDER, file_name);
+    FILE *fp = fopen(save_path, "wb");
+    if (fp == NULL) {
+        printf("Cannot create file.");
+        return -1;
+    }
+
+    char buffer[CHUNK_SIZE];
+    long total_received = 0;
+    long bytes_left = file_size;
+    int n;
+
+    while(total_received < file_size) {
+        bytes_left = file_size - total_received; 
+        int bytes_to_recv = (bytes_left < (long) sizeof(buffer)) ? (int) bytes_left : (int) sizeof(buffer);
+
+        n = recv(sockfd, buffer, bytes_to_recv, 0);
+
+        if (n <= 0) {
+            fclose(fp);
+            return -1;
+        }
+        fwrite(buffer, 1, n, fp);
+
+        total_received += n;
+        bytes_left -= n;
+    }
+    fclose(fp);
+    return 0; 
+}

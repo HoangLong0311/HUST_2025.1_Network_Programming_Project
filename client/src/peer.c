@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <pthread.h>
 #include "network_utils.h"
 #include "menu.h"
 #include "peer.h"
@@ -90,5 +91,4 @@ void do_register_peer(int server_sock, uint32_t client_id){
     
     free(payload);
     if (payload) payload = NULL;
-
 }

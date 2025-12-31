@@ -68,6 +68,7 @@ int main(int argc, char *argv[]){
     while(1) {
         if ((client_sock = accept(server_sock, (struct sockaddr*)&client_addr, (socklen_t*) &sin_size)) == -1) {
             perror("accept() error");
+            continue;
         } 
         client_info_t *client_info = malloc(sizeof(client_info_t));
         client_info->sock = client_sock; 

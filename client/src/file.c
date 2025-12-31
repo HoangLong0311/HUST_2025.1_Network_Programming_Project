@@ -5,7 +5,7 @@
 #include "file.h"
 #include "network_utils.h"
 #include "menu.h"
-
+#include "p2p.h"
 
 void do_share_file(int server_sock, uint32_t client_id){
     char file_name[MAX_FILENAME_LEN];
@@ -145,7 +145,7 @@ void do_unshare_file(int server_sock, uint32_t client_id){
 void do_search_file(int server_sock, uint32_t client_id){
     char file_name[MAX_FILENAME_LEN];
 
-    printf("\n--- SEARCH A FILE ---\n");
+    printf("\n--- SEARCH FOR FILE ---\n");
     get_input("Enter filename to search: ", file_name, sizeof(file_name));
 
     // create request
@@ -190,7 +190,7 @@ void do_search_file(int server_sock, uint32_t client_id){
                 }
                 printf("----------------------------------------\n");
             }
-
+            
             // Clean
             free(payload);
             if (payload) payload = NULL;
@@ -200,4 +200,19 @@ void do_search_file(int server_sock, uint32_t client_id){
 
     free(payload); 
     if (payload) payload = NULL;
+}
+
+void do_download_file(int server_sock, uint32_t client_id) {
+    char ip[MAX_IP_LEN];
+    char port_buff[10];
+    char file_name[MAX_FILENAME_LEN];
+
+    printf("\n--- DOWNLOAD FILE ---\n");
+
+    get_input("Enter the peer's ip you want to connect: ", ip, sizeof(ip));
+    get_input("Enter the peer's port you want to connect: ", port_buff, sizeof(port_buff));
+    uint16_t port = (uint16_t) atoi(port_buff);
+    get_input("Enter the filename you want to download: ", file_name, sizeof(file_name));
+
+    download_file(ip, port, file_name);
 }

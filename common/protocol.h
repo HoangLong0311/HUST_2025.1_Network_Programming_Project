@@ -14,10 +14,12 @@
 #define MAX_PASSWORD_LEN 32
 #define MAX_IP_LEN INET_ADDRSTRLEN
 #define BUFFER_SIZE 1024
+#define CHUNK_SIZE 4096
 
 #define CONFIG_FILE "config.txt"
 #define ACCOUNT_FILE "account.txt"
 #define INDEX_FILE "index.txt"
+#define DOWNLOAD_FOLDER "downloads"
 
 #define SERVER_PORT 5000
 #define BACKLOG 10
@@ -47,9 +49,8 @@
 #define MSG_SEARCH_FILE_RES             16
 // Download
 #define MSG_P2P_DOWNLOAD_REQ            17
-#define MSG_P2P_DOWNLOAD_RES            18
-#define MSG_P2P_FILE_DATA               19
-#define MSG_P2P_ERROR                   20
+#define MSG_P2P_FILE_METADATA           18
+#define MSG_P2P_DOWNLOAD_ERR            19
 
 // --- STATUS CODES ---
 // Generic codes
@@ -156,6 +157,17 @@ typedef struct contact_t{
 typedef struct search_file_metadata_t{
     uint16_t contact_count; 
 } search_file_metadata_t;
+
+// Download
+
+typedef struct download_file_req_t{
+    char file_name[MAX_FILENAME_LEN];
+} download_file_req_t;
+
+typedef struct downdload_file_res_t{
+    uint32_t file_size;
+} download_file_res_t;
+
 
 #pragma pack(pop)
 
